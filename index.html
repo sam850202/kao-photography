@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101110">
+  <meta name="description" content="Kao Photography — Event, portrait, commercial, food and travel photography.">
+  <title>Kao Photography — Photographer & Visual Storyteller</title>
+  <style>
+    :root{--bg:#101110;--panel:#181a18;--text:#f1efe9;--muted:#aaa69d;--gold:#c5ad8c;--line:#343630;--max:1440px}
+    *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans TC",sans-serif;letter-spacing:.01em}a{color:inherit;text-decoration:none}button{font:inherit}
+    .wrap{width:min(calc(100% - 64px),var(--max));margin:auto}.topbar{height:82px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line)}.brand{font-size:17px;letter-spacing:.16em;font-weight:650}.brand span{color:var(--gold)}nav{display:flex;gap:30px;color:var(--muted);font-size:12px;letter-spacing:.13em;text-transform:uppercase}nav a:hover,.text-link:hover{color:var(--gold)}
+    .hero{min-height:600px;display:grid;grid-template-columns:1.05fr .95fr;align-items:center;gap:48px;padding:74px 0 88px}.eyebrow{font-size:10px;letter-spacing:.28em;text-transform:uppercase;color:var(--gold)}h1{font-size:clamp(54px,8vw,112px);line-height:.92;letter-spacing:-.065em;font-weight:500;margin:25px 0 28px}.hero-copy{max-width:520px;color:var(--muted);font-size:15px;line-height:2}.hero-actions{display:flex;gap:24px;align-items:center;margin-top:34px}.button{display:inline-flex;padding:14px 20px;border:1px solid var(--gold);color:var(--gold);font-size:11px;letter-spacing:.14em;text-transform:uppercase;transition:.2s}.button:hover{background:var(--gold);color:var(--bg)}.text-link{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+    .hero-art{height:440px;position:relative;background:linear-gradient(135deg,#282923,#171916 55%,#3a3329);overflow:hidden}.hero-art:before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 55%,rgba(0,0,0,.55)),radial-gradient(ellipse at 70% 25%,rgba(197,173,140,.23),transparent 48%)}.hero-art img{width:100%;height:100%;object-fit:cover;opacity:.78;display:none}.hero-caption{position:absolute;bottom:22px;left:24px;color:#eee9df;font-size:10px;letter-spacing:.18em;text-transform:uppercase}
+    section{padding:74px 0;border-top:1px solid var(--line)}.section-head{display:flex;justify-content:space-between;align-items:end;gap:20px;margin-bottom:34px}.section-head h2{font-size:clamp(32px,4vw,54px);font-weight:450;letter-spacing:-.04em;margin:10px 0 0}.section-note{font-size:12px;color:var(--muted);line-height:1.8;max-width:360px}
+    .filters{display:flex;flex-wrap:wrap;gap:9px;margin:0 0 30px}.filter{border:1px solid var(--line);background:transparent;color:var(--muted);padding:11px 16px;font-size:11px;letter-spacing:.08em;cursor:pointer}.filter.active,.filter:hover{border-color:var(--gold);color:var(--gold)}
+    .status{font-size:12px;color:var(--muted);padding:28px 0}.albums{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}.album{border:1px solid var(--line);background:var(--panel);padding:0;text-align:left;color:var(--text);cursor:pointer;min-width:0;transition:transform .25s,border-color .25s}.album:hover{transform:translateY(-4px);border-color:var(--gold)}.album-cover{height:230px;background:#242620;overflow:hidden}.album-cover img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .5s}.album:hover .album-cover img{transform:scale(1.04)}.album-info{padding:17px 18px 19px}.album-title{font-size:14px;line-height:1.6}.album-meta{font-size:10px;color:var(--muted);margin-top:7px;letter-spacing:.1em;text-transform:uppercase}
+    .back{border:0;background:none;color:var(--gold);padding:0 0 22px;cursor:pointer;font-size:11px;letter-spacing:.12em;text-transform:uppercase}.photos{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.photo{border:0;background:#222;cursor:zoom-in;padding:0;aspect-ratio:4/3;overflow:hidden}.photo img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .4s}.photo:hover img{transform:scale(1.035)}
+    .about-grid{display:grid;grid-template-columns:1fr 1fr;gap:60px}.about-grid p{color:var(--muted);line-height:2;font-size:14px}.services{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-top:30px}.service{border-top:1px solid var(--gold);padding-top:15px;font-size:12px;color:var(--muted)}.service strong{display:block;color:var(--text);font-weight:500;margin-bottom:7px}
+    footer{padding:48px 0 35px;border-top:1px solid var(--line)}.footer-row{display:flex;justify-content:space-between;gap:24px;align-items:center}.footer-small{font-size:10px;letter-spacing:.12em;color:var(--muted)}.footer-links{display:flex;gap:22px;font-size:11px;color:var(--muted)}
+    .modal{position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:20;display:none;align-items:center;justify-content:center;padding:30px}.modal.open{display:flex}.modal img{max-width:min(92vw,1400px);max-height:82vh;object-fit:contain}.modal button{position:absolute;top:22px;right:26px;border:1px solid #666;background:#171717;color:white;padding:10px 14px;cursor:pointer}.modal a{position:absolute;bottom:18px;color:#ddd;font-size:12px;text-decoration:underline}
+    @media(max-width:850px){.wrap{width:min(calc(100% - 36px),var(--max))}.hero{grid-template-columns:1fr;gap:30px;padding:58px 0}.hero-art{height:340px}.albums{grid-template-columns:repeat(2,minmax(0,1fr))}.photos{grid-template-columns:repeat(2,minmax(0,1fr))}.services{grid-template-columns:repeat(2,1fr)}.about-grid{grid-template-columns:1fr;gap:15px}nav{gap:14px}}
+    @media(max-width:560px){.topbar{height:68px}nav{gap:12px;font-size:9px}.brand{font-size:14px}.hero-art{height:260px}.albums{grid-template-columns:1fr 1fr;gap:9px}.album-cover{height:145px}.album-info{padding:12px}.album-title{font-size:12px}.photos{gap:5px}.section-head{display:block}.section-note{margin-top:12px}.footer-row{align-items:flex-start;flex-direction:column}.services{grid-template-columns:1fr 1fr}}
+  </style>
+</head>
+<body>
+  <header class="wrap topbar">
+    <a class="brand" href="#">KAO <span>PHOTOGRAPHY</span></a>
+    <nav><a href="#work">Works</a><a href="#about">About</a><a href="#contact">Contact</a></nav>
+  </header>
+  <main>
+    <div class="wrap hero">
+      <div>
+        <div class="eyebrow">Taiwan · Photographer</div>
+        <h1>Stories<br>in frames.</h1>
+        <p class="hero-copy">從現場的瞬間、人物的神情，到旅行途中遇見的風景。以影像記錄人與地方，留下值得回看的片刻。</p>
+        <div class="hero-actions"><a class="button" href="#work">Explore portfolio</a><a class="text-link" href="#contact">Get in touch ↗</a></div>
+      </div>
+      <div class="hero-art"><img id="heroImage" alt="Kao Photography featured photograph"><div class="hero-caption">Selected moments · Kao Photography</div></div>
+    </div>
+    <section id="work">
+      <div class="wrap">
+        <div class="section-head"><div><div class="eyebrow">Selected works</div><h2>Photography portfolio</h2></div><p class="section-note">從 Flickr 公開相簿同步作品。選擇分類，再進入相簿瀏覽影像。</p></div>
+        <div class="filters" id="filters">
+          <button class="filter active" data-category="event">Event 活動紀錄</button>
+          <button class="filter" data-category="portrait">Portrait 人像</button>
+          <button class="filter" data-category="commercial">Commercial 商業</button>
+          <button class="filter" data-category="food">Food 食物</button>
+          <button class="filter" data-category="travel">Travel 旅遊</button>
+        </div>
+        <div id="status" class="status" aria-live="polite">正在連接 Flickr 相簿…</div>
+        <div id="albumView" class="albums"></div>
+        <div id="photoView" hidden><button class="back" id="backButton">← Back to albums</button><div id="photoTitle" class="eyebrow" style="margin-bottom:18px"></div><div class="photos" id="photos"></div></div>
+      </div>
+    </section>
+    <section id="about">
+      <div class="wrap">
+        <div class="eyebrow">Behind the camera</div><h2 style="font-size:clamp(32px,4vw,54px);font-weight:450;letter-spacing:-.04em;margin:10px 0 28px">About Kao</h2>
+        <div class="about-grid"><p>我是來自台灣的攝影師，主要拍攝活動紀錄，也持續透過人像、商業、食物與旅行攝影探索不同的影像語言。</p><p>我相信照片不只是記錄結果，也保存了當下的氣氛、關係與細節。歡迎洽談活動紀錄、人物形象及品牌影像合作。</p></div>
+        <div class="services"><div class="service"><strong>Event</strong>活動與展演紀錄</div><div class="service"><strong>Portrait</strong>人像與形象照</div><div class="service"><strong>Commercial</strong>品牌與商業影像</div><div class="service"><strong>Food</strong>食物與餐飲攝影</div><div class="service"><strong>Travel</strong>旅行與城市紀實</div></div>
+      </div>
+    </section>
+    <section id="contact">
+      <div class="wrap"><div class="eyebrow">Let's work together</div><h2 style="font-size:clamp(36px,6vw,76px);font-weight:450;letter-spacing:-.05em;margin:12px 0 25px">Have a story<br>to tell?</h2><p class="section-note">歡迎聯絡洽談攝影合作。請將下方聯絡資訊替換成你正式使用的帳號。</p><div class="hero-actions"><a class="button" href="mailto:YOUR_EMAIL@example.com">Email Kao ↗</a><a class="text-link" href="https://www.flickr.com/photos/161644745@N07/albums" target="_blank" rel="noreferrer">Flickr ↗</a><a class="text-link" href="https://www.instagram.com/YOUR_ACCOUNT/" target="_blank" rel="noreferrer">Instagram ↗</a></div></div>
+    </section>
+  </main>
+  <footer><div class="wrap footer-row"><div class="brand">KAO <span>PHOTOGRAPHY</span></div><div class="footer-small">© <span id="year"></span> KAO PHOTOGRAPHY · TAIWAN</div><div class="footer-links"><a href="https://www.flickr.com/photos/161644745@N07/albums" target="_blank" rel="noreferrer">Flickr</a><a href="#work">Portfolio</a><a href="#contact">Contact</a></div></div></footer>
+  <div class="modal" id="modal" role="dialog" aria-modal="true"><button id="closeModal" aria-label="Close">✕</button><img id="modalImage" alt=""><a id="modalLink" target="_blank" rel="noreferrer">View on Flickr ↗</a></div>
+<script>
+const labels={event:"Event 活動紀錄",portrait:"Portrait 人像攝影",commercial:"Commercial 商業攝影",food:"Food 食物攝影",travel:"Travel 旅遊攝影"};
+let currentCategory="event";
+const statusEl=document.getElementById("status"),albumView=document.getElementById("albumView"),photoView=document.getElementById("photoView");
+document.getElementById("year").textContent=new Date().getFullYear();
+function escapeHtml(s=""){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+async function loadCategory(category){
+ currentCategory=category;document.querySelectorAll(".filter").forEach(b=>b.classList.toggle("active",b.dataset.category===category));
+ albumView.innerHTML="";photoView.hidden=true;albumView.hidden=false;statusEl.hidden=false;statusEl.textContent="正在讀取 "+labels[category]+" 相簿…";
+ try{const r=await fetch("/api/flickr?category="+encodeURIComponent(category));const data=await r.json();if(!r.ok)throw new Error(data.error||"Flickr API 暫時無法讀取");
+ const albums=data.albums||[];statusEl.textContent=albums.length?labels[category]+" · "+albums.length+" 個相簿":"此分類目前沒有找到公開相簿。請確認 Flickr 相簿名稱及公開權限。";
+ albumView.innerHTML=albums.map(a=>'<button class="album" data-id="'+escapeHtml(a.id)+'" data-title="'+escapeHtml(a.title)+'"><div class="album-cover">'+(a.cover?'<img loading="lazy" src="'+escapeHtml(a.cover)+'" alt="">':'')+'</div><div class="album-info"><div class="album-title">'+escapeHtml(a.title)+'</div><div class="album-meta">'+(a.count||0)+' photographs · View album ↗</div></div></button>').join("");
+ albumView.querySelectorAll(".album").forEach(el=>el.addEventListener("click",()=>loadPhotos(el.dataset.id,el.dataset.title)));
+ const first=albums.find(a=>a.cover);if(first&&!document.getElementById("heroImage").src){const im=document.getElementById("heroImage");im.src=first.cover;im.style.display="block";}
+ }catch(e){statusEl.textContent=e.message+"。完成 Vercel 環境變數設定後即可啟用同步。";}}
+async function loadPhotos(id,title){statusEl.hidden=false;statusEl.textContent="正在載入相片…";albumView.hidden=true;photoView.hidden=false;document.getElementById("photoTitle").textContent=title;document.getElementById("photos").innerHTML="";
+ try{const r=await fetch("/api/flickr?photoset_id="+encodeURIComponent(id));const data=await r.json();if(!r.ok)throw new Error(data.error||"無法讀取相片");const photos=data.photos||[];statusEl.hidden=true;
+ document.getElementById("photos").innerHTML=photos.map(p=>'<button class="photo" data-src="'+escapeHtml(p.large||p.medium)+'" data-title="'+escapeHtml(p.title||title)+'" data-link="'+escapeHtml(p.page||"#")+'"><img loading="lazy" src="'+escapeHtml(p.medium||p.large)+'" alt="'+escapeHtml(p.title||title)+'"></button>').join("");
+ document.querySelectorAll(".photo").forEach(el=>el.addEventListener("click",()=>openModal(el.dataset.src,el.dataset.title,el.dataset.link)));
+ }catch(e){statusEl.textContent=e.message;}}
+function openModal(src,title,link){document.getElementById("modalImage").src=src;document.getElementById("modalImage").alt=title;document.getElementById("modalLink").href=link;document.getElementById("modal").classList.add("open");}
+document.getElementById("closeModal").addEventListener("click",()=>document.getElementById("modal").classList.remove("open"));
+document.getElementById("modal").addEventListener("click",e=>{if(e.target.id==="modal")e.currentTarget.classList.remove("open");});
+document.getElementById("backButton").addEventListener("click",()=>{photoView.hidden=true;albumView.hidden=false;statusEl.hidden=false;loadCategory(currentCategory);});
+document.querySelectorAll(".filter").forEach(b=>b.addEventListener("click",()=>loadCategory(b.dataset.category)));
+loadCategory("event");
+</script>
+</body>
+</html>
