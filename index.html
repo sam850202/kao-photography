@@ -200,8 +200,6 @@ async function loadPhotos(id,title){albumScrollY=window.scrollY;statusEl.hidden=
 currentPhotos=photos;currentModalSource="album";document.getElementById("photos").innerHTML=photos.map((p,i)=>'<button class="photo" data-index="'+i+'"><img loading="lazy" decoding="async" src="'+escapeHtml(p.medium||p.large)+'" alt="'+escapeHtml(title+" 相簿作品"+(p.title?"｜"+p.title:"")+"｜Kao Photography")+'"></button>').join("");
 document.querySelectorAll(".photo").forEach(el=>el.addEventListener("click",()=>openModal(Number(el.dataset.index))));
 requestAnimationFrame(()=>photoView.scrollIntoView({behavior:"smooth",block:"start"}));
- document.querySelectorAll(".photo").forEach(el=>el.addEventListener("click",()=>openModal(Number(el.dataset.index))));
- requestAnimationFrame(()=>photoView.scrollIntoView({behavior:"smooth",block:"start"}));
  }catch(e){statusEl.textContent=e.message;}}
 function openModal(index){if(!currentPhotos.length)return;currentPhotoIndex=(index+currentPhotos.length)%currentPhotos.length;const modalLink=document.getElementById("modalLink");modalLink.style.display=currentModalSource==="selected"?"none":"";updateModal();document.getElementById("modal").classList.add("open");document.body.style.overflow="hidden";}
 function updateModal(){const p=currentPhotos[currentPhotoIndex];if(!p)return;const title=p.title||document.getElementById("photoTitle").textContent;const image=document.getElementById("modalImage");image.src=p.large||p.medium||p.image;image.alt=title;document.getElementById("modalLink").href=p.page||"#";preloadAdjacentPhotos();}
