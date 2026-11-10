@@ -197,12 +197,15 @@ async function loadCategory(category){
  }catch(e){statusEl.textContent=e.message+"。完成 Vercel 環境變數設定後即可啟用同步。";}}
 async function loadPhotos(id,title){albumScrollY=window.scrollY;statusEl.hidden=false;statusEl.textContent="正在載入相片…";albumView.hidden=true;photoView.hidden=false;document.getElementById("photoTitle").textContent=title;document.getElementById("photos").innerHTML="";
  try{const r=await fetch("/api/flickr?photoset_id="+encodeURIComponent(id),{cache:"no-store"});const data=await r.json();if(!r.ok)throw new Error(data.error||"無法讀取相片");const photos=data.photos||[];statusEl.hidden=true;
-currentPhotos=photos;currentModalSource="album";
+currentPhotos=photos;currentModalSource="album";document.getElementById("photos").innerHTML=photos.map((p,i)=>'<button class="photo" data-index="'+i+'"><img loading="lazy" decoding="async" src="'+escapeHtml(p.medium||p.large)+'" alt="'+escapeHtml(title+" 相簿作品"+(p.title?"｜"+p.title:"")+"｜Kao Photography")+'"></button>').join("");
+document.querySelectorAll(".photo").forEach(el=>el.addEventListener("click",()=>openModal(Number(el.dataset.index))));
+requestAnimationFrame(()=>photoView.scrollIntoView({behavior:"smooth",block:"start"}));
  document.querySelectorAll(".photo").forEach(el=>el.addEventListener("click",()=>openModal(Number(el.dataset.index))));
  requestAnimationFrame(()=>photoView.scrollIntoView({behavior:"smooth",block:"start"}));
  }catch(e){statusEl.textContent=e.message;}}
 function openModal(index){if(!currentPhotos.length)return;currentPhotoIndex=(index+currentPhotos.length)%currentPhotos.length;const modalLink=document.getElementById("modalLink");modalLink.style.display=currentModalSource==="selected"?"none":"";updateModal();document.getElementById("modal").classList.add("open");document.body.style.overflow="hidden";}
-image.src=p.large||p.medium||p.image;image.alt=title;document.getElementById("modalLink").href=p.page||"#";preloadAdjacentPhotos();}
+function updateModal(){const p=currentPhotos[currentPhotoIndex];if(!p)return;const title=p.title||document.getElementById("photoTitle").textContent;const image=document.getElementById("modalImage");image.src=p.large||p.medium||p.image;image.alt=title;document.getElementById("modalLink").href=p.page||"#";preloadAdjacentPhotos();}
+function preloadAdjacentPhotos(){if(currentPhotos.length<2)return;[-1,1].forEach(step=>{const p=currentPhotos[(currentPhotoIndex+step+currentPhotos.length)%currentPhotos.length];const src=p.large||p.medium||p.image;if(src){const img=new Image();img.src=src;}});}
 const src=p.large||p.medium||p.image;
 function closeModal(){document.getElementById("modal").classList.remove("open");document.body.style.overflow="";}
 function changePhoto(step){if(!currentPhotos.length)return;currentPhotoIndex=(currentPhotoIndex+step+currentPhotos.length)%currentPhotos.length;updateModal();}
