@@ -129,8 +129,8 @@
     <section id="contact">
       <div class="wrap">
         <div class="eyebrow">Let's work together</div>
-        <h2 style="font-size:clamp(32px,4.2vw,54px);line-height:1.12;font-weight:400;letter-spacing:-.02em;margin:12px 0 25px">Have a story<br>to tell?</h2>
-        <p class="section-note">歡迎洽談活動紀錄、人像、商品與餐飲攝影合作。填寫以下資訊，我會透過 Email 與你聯繫。</p>
+        <h2 style="font-size:clamp(32px,4.2vw,54px);line-height:1.12;font-weight:400;letter-spacing:-.02em;margin:12px 0 25px">有想法要實現嗎？</h2>
+        <p class="section-note">告訴我你的拍攝需求，我會透過 Email 與你聯繫，討論拍攝方向與合作細節。</p>
         <form class="inquiry-form" id="inquiryForm" action="https://formspree.io/f/myeerjzp" method="POST">
           <input type="hidden" name="_subject" value="Kao Photography｜網站新詢價">
           <div class="form-honeypot" aria-hidden="true"><label>請勿填寫此欄<input type="text" name="_gotcha" tabindex="-1" autocomplete="off"></label></div>
@@ -140,7 +140,7 @@
           <div class="form-field"><label for="inquiryDate">預計拍攝日期 <span class="form-optional">（選填）</span></label><input id="inquiryDate" name="shoot_date" type="date"></div>
           <div class="form-field"><label for="inquiryBudget">預算範圍</label><select id="inquiryBudget" name="budget"><option value="" selected>尚未確定／暫不提供</option><option value="NT$5,000 以下">NT$5,000 以下</option><option value="NT$5,000–10,000">NT$5,000–10,000</option><option value="NT$10,000–20,000">NT$10,000–20,000</option><option value="NT$20,000–50,000">NT$20,000–50,000</option><option value="NT$50,000 以上">NT$50,000 以上</option></select></div>
           <div class="form-field full"><label for="inquiryMessage">拍攝需求與補充說明 <span class="form-required">*</span></label><textarea id="inquiryMessage" name="message" placeholder="例如：拍攝內容、地點、時數、預計交件時間或其他需求…" required maxlength="5000"></textarea></div>
-          <button class="button form-submit" id="inquirySubmit" type="submit">送出詢價 ↗</button>
+          <button class="button form-submit" id="inquirySubmit" type="submit">送出需求 ↗</button>
           <div class="form-status" id="inquiryStatus" role="status" aria-live="polite"></div>
         </form>
         <div class="hero-actions"><span class="text-link">或直接 Email 聯絡：</span><a class="text-link email-contact" href="mailto:sambaimai850202@gmail.com" title="點擊以 Email 聯絡">sambaimai850202@gmail.com ↗</a><a class="text-link" href="https://www.flickr.com/photos/161644745@N07/albums" target="_blank" rel="noreferrer">Flickr ↗</a></div>
@@ -239,7 +239,7 @@ if(inquiryForm){
   }catch(error){
    status.className="form-status error";status.textContent=error.message||"目前無法送出，請稍後再試或直接寄送 Email。";
   }finally{
-   submit.disabled=false;submit.textContent="送出詢價 ↗";
+   submit.disabled=false;submit.textContent="送出需求 ↗";
   }
  });
 }
