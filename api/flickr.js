@@ -27,7 +27,7 @@ async function getAlbums() {
   }));
 }
 module.exports = async function handler(req, res) {
-  res.setHeader("Cache-Control", "s-maxage=900, stale-while-revalidate=3600");
+  res.setHeader("Cache-Control", req.query.featured_works === "1" ? "s-maxage=21600, stale-while-revalidate=86400" : "s-maxage=900, stale-while-revalidate=3600");
   res.setHeader("Access-Control-Allow-Origin", "*");
   if (req.method !== "GET") return res.status(405).json({ error: "Method not allowed" });
   if (!process.env.FLICKR_API_KEY) return res.status(503).json({ error: "網站尚未設定 Flickr API Key。請在 Vercel 環境變數加入 FLICKR_API_KEY。" });
@@ -41,6 +41,31 @@ module.exports = async function handler(req, res) {
       const selected = preferred.map(label => sizes.find(size => size.label === label)).find(Boolean) || sizes[sizes.length - 1];
       if (!selected || !selected.source) return res.status(404).json({ error: "找不到這張 Flickr 照片的可用尺寸。" });
       return res.status(200).json({ photo: { url: selected.source, page: "https://www.flickr.com/photos/" + USER_ID + "/" + photoId } });
+    }
+    if (req.query.featured_works === "1") {
+      const allAlbums = await getAlbums();
+      const picks = [];
+      for (const [category, titles] of Object.entries(CATEGORIES)) {
+        const wanted = titles.map(normalize);
+        const candidates = allAlbums.filter(album => wanted.includes(normalize(album.title)) && album.count > 0);
+        if (!candidates.length) continue;
+        const album = candidates[Math.floor(Math.random() * candidates.length)];
+        const page = Math.max(1, Math.floor(Math.random() * album.count) + 1);
+        const data = await flickr("flickr.photosets.getPhotos", {
+          user_id: USER_ID, photoset_id: album.id, per_page: "1", page: String(page),
+          extras: "url_m,url_z,url_o"
+        });
+        const photo = data.photoset && data.photoset.photo && data.photoset.photo[0];
+        if (!photo) continue;
+        picks.push({
+          id: String(photo.id), title: photo.title || album.title,
+          category, category_label: category.charAt(0).toUpperCase() + category.slice(1),
+          album: album.title,
+          image: photo.url_z || photo.url_m || photo.url_o || null,
+          page: "https://www.flickr.com/photos/" + USER_ID + "/" + photo.id
+        });
+      }
+      return res.status(200).json({ works: picks.filter(photo => photo.image) });
     }
     const albums = await getAlbums();
     if (req.query.photoset_id) {
