@@ -39,13 +39,21 @@ module.exports = async function handler(req, res) {
     if (req.query.profile_photo === "1") {
       const data = await flickr("flickr.people.getInfo", { user_id: USER_ID });
       const person = data.person || {};
-      const farm = Number(person.iconfarm || 0);
+      const farm = String(person.iconfarm || "0");
       const server = String(person.iconserver || "0");
       const nsid = String(person.nsid || USER_ID);
-      const avatar = farm > 0 && server !== "0"
-        ? "https://farm" + farm + ".staticflickr.com/" + server + "/buddyicons/" + encodeURIComponent(nsid) + ".jpg"
-        : "https://www.flickr.com/images/buddyicon.gif";
-      return res.status(200).json({ avatar });
+      const hasCustomIcon = Number(farm) > 0 && Number(server) > 0;
+      const base = hasCustomIcon
+        ? "https://farm" + farm + ".staticflickr.com/" + server + "/buddyicons/" + encodeURIComponent(nsid)
+        : "https://www.flickr.com/images/buddyicon";
+      return res.status(200).json({
+        avatar: hasCustomIcon ? base + ".jpg" : base + ".gif",
+        avatarLarge: hasCustomIcon ? base + "_r.jpg" : base + ".gif",
+        hasCustomIcon,
+        iconfarm: farm,
+        iconserver: server,
+        nsid
+      });
     }
     if (req.query.featured_photo_id) {
       const photoId = String(req.query.featured_photo_id);
