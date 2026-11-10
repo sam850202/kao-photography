@@ -36,7 +36,7 @@ module.exports = async function handler(req, res) {
   try {
     if (req.query.featured_photo_id) {
       const photoId = String(req.query.featured_photo_id);
-      if (!/^\\d+$/.test(photoId)) return res.status(400).json({ error: "無效的 Flickr 照片編號。" });
+      if (!/^\d+$/.test(photoId)) return res.status(400).json({ error: "無效的 Flickr 照片編號。" });
       const data = await flickr("flickr.photos.getSizes", { photo_id: photoId });
       const sizes = data.sizes && data.sizes.size || [];
       const preferred = ["Large 2048", "Large 1600", "Large", "Medium 800", "Medium 640"];
