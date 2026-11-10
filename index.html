@@ -94,7 +94,7 @@
     </section>
     <section id="work">
       <div class="wrap">
-        <div class="section-head"><div><div class="eyebrow">Selected works</div><h2>Photography portfolio</h2></div><p class="section-note">選擇分類，進入相簿瀏覽完整系列。</p></div>
+        <div class="section-head"><div><div class="eyebrow">PORTFOLIO</div><h2>Photography portfolio</h2></div><p class="section-note">選擇分類，進入相簿瀏覽完整系列。</p></div>
         <div class="filters" id="filters">
           <button class="filter active" data-category="event">Event 活動紀錄</button>
           <button class="filter" data-category="portrait">Portrait 人像</button>
@@ -178,7 +178,7 @@ async function loadSelectedWorks(){
   const works=data.works||[];
   status.textContent=works.length?"從不同分類隨機選出的作品":"目前沒有可展示的精選作品。";
 selectedWorks=works;
-   grid.innerHTML=works.map((p,i)=>'<button type="button" class="selected-card" data-index="'+i+'"><div class="selected-image"><img loading="lazy" src="'+escapeHtml(p.image)+'" alt="'+escapeHtml((labels[p.category]||"攝影作品")+"｜"+p.album+"，Kao Photography")+'"></div><div class="selected-info"><div class="selected-category">'+escapeHtml(p.category_label)+'</div><div class="selected-album">'+escapeHtml(p.album)+'</div></div></button>').join("");
+   grid.innerHTML=works.map((p,i)=>'<button type="button" class="selected-card" data-index="'+i+'"><div class="selected-image"><img loading="lazy" src="'+escapeHtml(p.image)+'" alt="'+escapeHtml((labels[p.category]||"攝影作品")+"｜"+p.album+"，Kao Photography")+'"></div><div class="selected-info"><div class="selected-category">'+escapeHtml(p.category_label)+'</div></div></button>').join("");
    grid.querySelectorAll(".selected-card").forEach(el=>el.addEventListener("click",()=>{currentPhotos=selectedWorks;currentModalSource="selected";document.getElementById("photoTitle").textContent="Selected Works";openModal(Number(el.dataset.index));}));
  }catch(e){status.textContent=e.message;}
 }
