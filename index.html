@@ -41,7 +41,7 @@
     </div>
     <section id="selected">
       <div class="wrap">
-        <div class="section-head"><div><div class="eyebrow">A rotating selection</div><h2>Selected Works</h2></div><p class="section-note">從五大攝影分類中隨機選出作品，定期輪替呈現不同相簿的影像。</p></div>
+        <div class="section-head"><div><div class="eyebrow">A rotating selection</div><h2>Selected Works</h2></div><p class="section-note">每次重新載入頁面，都會從五大攝影分類中重新隨機挑選作品。</p></div>
         <div id="selectedStatus" class="status">正在挑選精選作品…</div>
         <div id="selectedGrid" class="selected-grid"></div>
       </div>
@@ -85,7 +85,7 @@ async function loadSelectedWorks(){
  const status=document.getElementById("selectedStatus");
  const grid=document.getElementById("selectedGrid");
  try{
-  const r=await fetch("/api/flickr?featured_works=1");
+  const r=await fetch("/api/flickr?featured_works=1",{cache:"no-store"});
   const data=await r.json();
   if(!r.ok)throw new Error(data.error||"精選作品暫時無法載入");
   const works=data.works||[];
