@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://kao-photography.vercel.app/sitemap.xml
