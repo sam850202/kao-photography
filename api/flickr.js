@@ -73,20 +73,31 @@ module.exports = async function handler(req, res) {
     if (req.query.photoset_id) {
       const selected = albums.find(a => a.id === String(req.query.photoset_id));
       if (!selected) return res.status(404).json({ error: "找不到這個公開相簿。" });
-      const totalPages = Math.max(1, Math.ceil(selected.count / 30));
+      const fetchSize = 500;
+      const totalPages = Math.max(1, Math.ceil(selected.count / fetchSize));
       const requestedPage = Number.parseInt(req.query.page, 10);
-      const page = Number.isFinite(requestedPage) ? Math.min(totalPages, Math.max(1, requestedPage)) : 1;
+      const page = Number.isFinite(requestedPage)
+        ? Math.min(totalPages, Math.max(1, requestedPage))
+        : Math.floor(Math.random() * totalPages) + 1;
       const data = await flickr("flickr.photosets.getPhotos", {
-        user_id: USER_ID, photoset_id: selected.id, per_page: "30", page: String(page),
+        user_id: USER_ID, photoset_id: selected.id, per_page: String(fetchSize), page: String(page),
         extras: "url_m,url_z,url_c,url_l,description,date_taken,owner_name"
       });
-      const photos = (data.photoset && data.photoset.photo || []).map(photo => ({
+      const allPhotos = (data.photoset && data.photoset.photo || []).map(photo => ({
         id: String(photo.id), title: photo.title || "", medium: photo.url_m || photo.url_z || photo.url_c || photo.url_l || null,
         large: photo.url_l || photo.url_c || photo.url_z || photo.url_m || null,
         page: "https://www.flickr.com/photos/" + USER_ID + "/" + photo.id,
         taken: photo.datetaken || null
       })).filter(photo => photo.medium);
-      return res.status(200).json({ album: selected, page, totalPages, photos });
+      const windowSize = Math.min(30, allPhotos.length);
+      const maxStart = Math.max(0, allPhotos.length - windowSize);
+      const start = Math.floor(Math.random() * (maxStart + 1));
+      const photos = allPhotos.slice(start, start + windowSize);
+      for (let i = photos.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [photos[i], photos[j]] = [photos[j], photos[i]];
+      }
+      return res.status(200).json({ album: selected, page, totalPages, start, photos });
     }
     const category = String(req.query.category || "event");
     if (!Object.prototype.hasOwnProperty.call(CATEGORIES, category)) return res.status(400).json({ error: "未知的作品分類。" });
