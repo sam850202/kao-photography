@@ -27,14 +27,16 @@ async function getAlbums() {
   }));
 }
 module.exports = async function handler(req, res) {
-  res.setHeader("Cache-Control", req.query.featured_works === "1" ? "s-maxage=21600, stale-while-revalidate=86400" : "s-maxage=900, stale-while-revalidate=3600");
+  const isFeaturedWorks = req.query.featured_works === "1";
+  res.setHeader("Cache-Control", isFeaturedWorks ? "no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0" : "s-maxage=900, stale-while-revalidate=3600");
+  if (isFeaturedWorks) res.setHeader("CDN-Cache-Control", "no-store");
   res.setHeader("Access-Control-Allow-Origin", "*");
   if (req.method !== "GET") return res.status(405).json({ error: "Method not allowed" });
   if (!process.env.FLICKR_API_KEY) return res.status(503).json({ error: "網站尚未設定 Flickr API Key。請在 Vercel 環境變數加入 FLICKR_API_KEY。" });
   try {
     if (req.query.featured_photo_id) {
       const photoId = String(req.query.featured_photo_id);
-      if (!/^\d+$/.test(photoId)) return res.status(400).json({ error: "無效的 Flickr 照片編號。" });
+      if (!/^\\d+$/.test(photoId)) return res.status(400).json({ error: "無效的 Flickr 照片編號。" });
       const data = await flickr("flickr.photos.getSizes", { photo_id: photoId });
       const sizes = data.sizes && data.sizes.size || [];
       const preferred = ["Large 2048", "Large 1600", "Large", "Medium 800", "Medium 640"];
@@ -42,7 +44,7 @@ module.exports = async function handler(req, res) {
       if (!selected || !selected.source) return res.status(404).json({ error: "找不到這張 Flickr 照片的可用尺寸。" });
       return res.status(200).json({ photo: { url: selected.source, page: "https://www.flickr.com/photos/" + USER_ID + "/" + photoId } });
     }
-    if (req.query.featured_works === "1") {
+    if (isFeaturedWorks) {
       const allAlbums = await getAlbums();
       const picks = [];
       for (const [category, titles] of Object.entries(CATEGORIES)) {
