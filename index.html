@@ -189,9 +189,17 @@ async function loadAboutAvatar(){
   const response=await fetch("/api/flickr?profile_photo=1");
   const data=await response.json();
   if(!response.ok||!data.avatar)throw new Error(data.error||"無法讀取 Flickr 個人頭像");
-  image.src=data.avatar;
   image.hidden=false;
-  image.onerror=()=>{image.hidden=true;};
+  image.onerror=()=>{
+   if(image.dataset.avatarFallback!=="1"&&data.avatar&&image.src!==data.avatar){
+    image.dataset.avatarFallback="1";
+    image.src=data.avatar;
+   }else{
+    image.hidden=true;
+    console.warn("Flickr buddyicon image could not be loaded.");
+   }
+  };
+  image.src=data.avatarLarge||data.avatar;
  }catch(error){console.warn("Flickr profile avatar:",error);}
 }
 async function loadFeaturedPhoto(){
