@@ -36,6 +36,17 @@ module.exports = async function handler(req, res) {
   if (req.method !== "GET") return res.status(405).json({ error: "Method not allowed" });
   if (!process.env.FLICKR_API_KEY) return res.status(503).json({ error: "網站尚未設定 Flickr API Key。請在 Vercel 環境變數加入 FLICKR_API_KEY。" });
   try {
+    if (req.query.profile_photo === "1") {
+      const data = await flickr("flickr.people.getInfo", { user_id: USER_ID });
+      const person = data.person || {};
+      const farm = Number(person.iconfarm || 0);
+      const server = String(person.iconserver || "0");
+      const nsid = String(person.nsid || USER_ID);
+      const avatar = farm > 0 && server !== "0"
+        ? "https://farm" + farm + ".staticflickr.com/" + server + "/buddyicons/" + encodeURIComponent(nsid) + ".jpg"
+        : "https://www.flickr.com/images/buddyicon.gif";
+      return res.status(200).json({ avatar });
+    }
     if (req.query.featured_photo_id) {
       const photoId = String(req.query.featured_photo_id);
       if (!/^\d+$/.test(photoId)) return res.status(400).json({ error: "無效的 Flickr 照片編號。" });
