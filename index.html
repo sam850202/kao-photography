@@ -19,7 +19,7 @@
     .back{border:0;background:none;color:var(--gold);padding:0 0 22px;cursor:pointer;font-size:11px;letter-spacing:.12em;text-transform:uppercase}.photos{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.photo{border:0;background:#222;cursor:zoom-in;padding:0;aspect-ratio:4/3;overflow:hidden}.photo img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .4s}.photo:hover img{transform:scale(1.035)}
     .about-grid{display:grid;grid-template-columns:1fr 1fr;gap:60px}.about-grid p{color:var(--muted);line-height:2;font-size:14px}.services{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-top:30px}.service{border-top:1px solid var(--gold);padding-top:15px;font-size:12px;color:var(--muted)}.service strong{display:block;color:var(--text);font-weight:500;margin-bottom:7px}
     footer{padding:48px 0 35px;border-top:1px solid var(--line)}.footer-row{display:flex;justify-content:space-between;gap:24px;align-items:center}.footer-small{font-size:10px;letter-spacing:.12em;color:var(--muted)}.footer-links{display:flex;gap:22px;font-size:11px;color:var(--muted)}
-    .modal{position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:20;display:none;align-items:center;justify-content:center;padding:30px}.modal.open{display:flex}.modal img{max-width:min(92vw,1400px);max-height:82vh;object-fit:contain}.modal button{position:absolute;top:22px;right:26px;border:1px solid #666;background:#171717;color:white;padding:10px 14px;cursor:pointer}.modal a{position:absolute;bottom:18px;color:#ddd;font-size:12px;text-decoration:underline}
+    .modal{position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:20;display:none;align-items:center;justify-content:center;padding:60px 76px}.modal.open{display:flex}.modal img{max-width:min(92vw,1400px);max-height:82vh;object-fit:contain}.modal button{position:absolute;border:1px solid #666;background:rgba(23,23,23,.9);color:white;padding:10px 14px;cursor:pointer}.modal button:hover{border-color:var(--gold);color:var(--gold)}.modal .modal-close{top:22px;right:26px}.modal .modal-prev,.modal .modal-next{top:50%;transform:translateY(-50%);font-size:25px;padding:14px 18px}.modal .modal-prev{left:20px}.modal .modal-next{right:20px}.modal a{position:absolute;bottom:18px;color:#ddd;font-size:12px;text-decoration:underline}
     @media(max-width:1100px){.selected-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}@media(max-width:850px){.wrap{width:min(calc(100% - 36px),var(--max))}.hero{grid-template-columns:1fr;gap:30px;padding:58px 0}.hero-art{height:340px}.albums{grid-template-columns:repeat(2,minmax(0,1fr))}.photos{grid-template-columns:repeat(2,minmax(0,1fr))}.services{grid-template-columns:repeat(2,1fr)}.about-grid{grid-template-columns:1fr;gap:15px}nav{gap:14px}}
     @media(max-width:560px){.selected-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.topbar{height:68px}nav{gap:12px;font-size:9px}.brand{font-size:14px}.hero-art{height:260px}.albums{grid-template-columns:1fr 1fr;gap:9px}.album-cover{height:145px}.album-info{padding:12px}.album-title{font-size:12px}.photos{gap:5px}.section-head{display:block}.section-note{margin-top:12px}.footer-row{align-items:flex-start;flex-direction:column}.services{grid-template-columns:1fr 1fr}}
   </style>
@@ -73,10 +73,13 @@
     </section>
   </main>
   <footer><div class="wrap footer-row"><div class="brand">KAO <span>PHOTOGRAPHY</span></div><div class="footer-small">© <span id="year"></span> KAO PHOTOGRAPHY · TAIWAN</div><div class="footer-links"><a href="https://www.flickr.com/photos/161644745@N07/albums" target="_blank" rel="noreferrer">Flickr</a><a href="#work">Portfolio</a><a href="#contact">Contact</a></div></div></footer>
-  <div class="modal" id="modal" role="dialog" aria-modal="true"><button id="closeModal" aria-label="Close">✕</button><img id="modalImage" alt=""><a id="modalLink" target="_blank" rel="noreferrer">View on Flickr ↗</a></div>
+  <div class="modal" id="modal" role="dialog" aria-modal="true" aria-label="Photo viewer"><button class="modal-close" id="closeModal" aria-label="Close">✕</button><button class="modal-prev" id="prevPhoto" aria-label="Previous photo">‹</button><img id="modalImage" alt=""><button class="modal-next" id="nextPhoto" aria-label="Next photo">›</button><a id="modalLink" target="_blank" rel="noreferrer">View on Flickr ↗</a></div>
 <script>
 const labels={event:"Event 活動紀錄",portrait:"Portrait 人像攝影",commercial:"Commercial 商業攝影",food:"Food 食物攝影",travel:"Travel 旅遊攝影"};
 let currentCategory="event";
+let currentPhotos=[];
+let currentPhotoIndex=0;
+let albumScrollY=0;
 // 可將下方網址替換成任一張公開 Flickr 照片網址，設定首頁主視覺；留空則自動使用 Event 第一個相簿封面。
 const FEATURED_PHOTO_ID="50323029916";
 const statusEl=document.getElementById("status"),albumView=document.getElementById("albumView"),photoView=document.getElementById("photoView");
@@ -113,15 +116,21 @@ async function loadCategory(category){
  albumView.querySelectorAll(".album").forEach(el=>el.addEventListener("click",()=>loadPhotos(el.dataset.id,el.dataset.title)));
  const first=albums.find(a=>a.cover);const im=document.getElementById("heroImage");if(!FEATURED_PHOTO_ID&&first&&im.dataset.loaded!=="true"){im.src=first.cover;im.dataset.loaded="true";im.style.display="block";}
  }catch(e){statusEl.textContent=e.message+"。完成 Vercel 環境變數設定後即可啟用同步。";}}
-async function loadPhotos(id,title){statusEl.hidden=false;statusEl.textContent="正在載入相片…";albumView.hidden=true;photoView.hidden=false;document.getElementById("photoTitle").textContent=title;document.getElementById("photos").innerHTML="";
+async function loadPhotos(id,title){albumScrollY=window.scrollY;statusEl.hidden=false;statusEl.textContent="正在載入相片…";albumView.hidden=true;photoView.hidden=false;document.getElementById("photoTitle").textContent=title;document.getElementById("photos").innerHTML="";
  try{const r=await fetch("/api/flickr?photoset_id="+encodeURIComponent(id));const data=await r.json();if(!r.ok)throw new Error(data.error||"無法讀取相片");const photos=data.photos||[];statusEl.hidden=true;
- document.getElementById("photos").innerHTML=photos.map(p=>'<button class="photo" data-src="'+escapeHtml(p.large||p.medium)+'" data-title="'+escapeHtml(p.title||title)+'" data-link="'+escapeHtml(p.page||"#")+'"><img loading="lazy" src="'+escapeHtml(p.medium||p.large)+'" alt="'+escapeHtml(p.title||title)+'"></button>').join("");
- document.querySelectorAll(".photo").forEach(el=>el.addEventListener("click",()=>openModal(el.dataset.src,el.dataset.title,el.dataset.link)));
+ currentPhotos=photos;document.getElementById("photos").innerHTML=photos.map((p,i)=>'<button class="photo" data-index="'+i+'"><img loading="lazy" src="'+escapeHtml(p.medium||p.large)+'" alt="'+escapeHtml(p.title||title)+'"></button>').join("");
+ document.querySelectorAll(".photo").forEach(el=>el.addEventListener("click",()=>openModal(Number(el.dataset.index))));
  }catch(e){statusEl.textContent=e.message;}}
-function openModal(src,title,link){document.getElementById("modalImage").src=src;document.getElementById("modalImage").alt=title;document.getElementById("modalLink").href=link;document.getElementById("modal").classList.add("open");}
-document.getElementById("closeModal").addEventListener("click",()=>document.getElementById("modal").classList.remove("open"));
-document.getElementById("modal").addEventListener("click",e=>{if(e.target.id==="modal")e.currentTarget.classList.remove("open");});
-document.getElementById("backButton").addEventListener("click",()=>{photoView.hidden=true;albumView.hidden=false;statusEl.hidden=false;loadCategory(currentCategory);});
+function openModal(index){if(!currentPhotos.length)return;currentPhotoIndex=(index+currentPhotos.length)%currentPhotos.length;updateModal();document.getElementById("modal").classList.add("open");document.body.style.overflow="hidden";}
+function updateModal(){const p=currentPhotos[currentPhotoIndex];if(!p)return;const title=p.title||document.getElementById("photoTitle").textContent;document.getElementById("modalImage").src=p.large||p.medium;document.getElementById("modalImage").alt=title;document.getElementById("modalLink").href=p.page||"#";}
+function closeModal(){document.getElementById("modal").classList.remove("open");document.body.style.overflow="";}
+function changePhoto(step){if(!currentPhotos.length)return;currentPhotoIndex=(currentPhotoIndex+step+currentPhotos.length)%currentPhotos.length;updateModal();}
+document.getElementById("closeModal").addEventListener("click",closeModal);
+document.getElementById("prevPhoto").addEventListener("click",()=>changePhoto(-1));
+document.getElementById("nextPhoto").addEventListener("click",()=>changePhoto(1));
+document.getElementById("modal").addEventListener("click",e=>{if(e.target.id==="modal")closeModal();});
+document.addEventListener("keydown",e=>{if(!document.getElementById("modal").classList.contains("open"))return;if(e.key==="ArrowLeft"){e.preventDefault();changePhoto(-1);}else if(e.key==="ArrowRight"){e.preventDefault();changePhoto(1);}else if(e.key==="Escape"){e.preventDefault();closeModal();}});
+document.getElementById("backButton").addEventListener("click",()=>{photoView.hidden=true;albumView.hidden=false;statusEl.hidden=false;window.scrollTo({top:albumScrollY,behavior:"auto"});});
 document.querySelectorAll(".filter").forEach(b=>b.addEventListener("click",()=>loadCategory(b.dataset.category)));
 loadFeaturedPhoto();
 loadSelectedWorks();
