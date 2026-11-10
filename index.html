@@ -59,6 +59,9 @@
      .selected-refresh.is-loading svg{animation:selected-spin .8s linear infinite}
      @keyframes selected-spin{to{transform:rotate(360deg)}}
      .selected-card{display:block;width:100%;min-width:0;padding:0;text-align:left;color:var(--text);font:inherit;cursor:zoom-in;background:var(--panel);border:1px solid var(--line);transition:border-color .2s,transform .2s;overflow:hidden}
+     .selected-card{animation:selected-fade-in .65s ease both}
+     @keyframes selected-fade-in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+     @media(prefers-reduced-motion:reduce){.selected-card{animation:none}}
      .selected-card:hover{border-color:var(--gold);transform:translateY(-3px)}
      .selected-image{width:100%;aspect-ratio:4/3;overflow:hidden;background:#222}
      .selected-image img{display:block;width:100%;height:100%;object-fit:cover;transition:transform .4s}
@@ -188,7 +191,7 @@ async function loadSelectedWorks(){
   const works=data.works||[];
   status.textContent=works.length?"":"目前沒有可展示的精選作品。";
   selectedWorks=works;
-  grid.innerHTML=works.map((p,i)=>'<button type="button" class="selected-card" data-index="'+i+'"><div class="selected-image"><img loading="lazy" src="'+escapeHtml(p.image)+'" alt="'+escapeHtml((labels[p.category]||"攝影作品")+"｜"+p.album+"，Kao Photography")+'"></div><div class="selected-info"><div class="selected-category">'+escapeHtml(p.category_label)+'</div></div></button>').join("");
+  grid.innerHTML=works.map((p,i)=>'<button type="button" class="selected-card" style="animation-delay:"+(i*90)+"ms" data-index="'+i+'"><div class="selected-image"><img loading="lazy" src="'+escapeHtml(p.image)+'" alt="'+escapeHtml((labels[p.category]||"攝影作品")+"｜"+p.album+"，Kao Photography")+'"></div><div class="selected-info"><div class="selected-category">'+escapeHtml(p.category_label)+'</div></div></button>').join("");
   grid.querySelectorAll(".selected-card").forEach(el=>el.addEventListener("click",()=>{currentPhotos=selectedWorks;currentModalSource="selected";document.getElementById("photoTitle").textContent="Selected Works";openModal(Number(el.dataset.index));}));
  }catch(e){status.textContent=e.message;}
  finally{if(refresh){refresh.disabled=false;refresh.classList.remove("is-loading");}}
