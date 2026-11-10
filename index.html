@@ -191,7 +191,7 @@ async function loadSelectedWorks(){
   const works=data.works||[];
   status.textContent=works.length?"":"目前沒有可展示的精選作品。";
   selectedWorks=works;
-  grid.innerHTML=works.map((p,i)=>'<button type="button" class="selected-card" style="animation-delay:"+(i*90)+"ms" data-index="'+i+'"><div class="selected-image"><img loading="lazy" src="'+escapeHtml(p.image)+'" alt="'+escapeHtml((labels[p.category]||"攝影作品")+"｜"+p.album+"，Kao Photography")+'"></div><div class="selected-info"><div class="selected-category">'+escapeHtml(p.category_label)+'</div></div></button>').join("");
+  grid.innerHTML=works.map((p,i)=>'<button type="button" class="selected-card" style="animation-delay:'+(i*90)+'ms" data-index="'+i+'"><div class="selected-image"><img loading="lazy" src="'+escapeHtml(p.image)+'" alt="'+escapeHtml((labels[p.category]||"攝影作品")+"｜"+p.album+"，Kao Photography")+'"></div><div class="selected-info"><div class="selected-category">'+escapeHtml(p.category_label)+'</div></div></button>').join("");
   grid.querySelectorAll(".selected-card").forEach(el=>el.addEventListener("click",()=>{currentPhotos=selectedWorks;currentModalSource="selected";document.getElementById("photoTitle").textContent="Selected Works";openModal(Number(el.dataset.index));}));
  }catch(e){status.textContent=e.message;}
  finally{if(refresh){refresh.disabled=false;refresh.classList.remove("is-loading");}}
