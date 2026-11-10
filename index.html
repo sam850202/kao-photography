@@ -70,9 +70,19 @@
 const labels={event:"Event 活動紀錄",portrait:"Portrait 人像攝影",commercial:"Commercial 商業攝影",food:"Food 食物攝影",travel:"Travel 旅遊攝影"};
 let currentCategory="event";
 // 可將下方網址替換成任一張公開 Flickr 照片網址，設定首頁主視覺；留空則自動使用 Event 第一個相簿封面。
-const FEATURED_PHOTO_URL="";
+const FEATURED_PHOTO_ID="50323029916";
 const statusEl=document.getElementById("status"),albumView=document.getElementById("albumView"),photoView=document.getElementById("photoView");
 document.getElementById("year").textContent=new Date().getFullYear();
+async function loadFeaturedPhoto(){
+ if(!FEATURED_PHOTO_ID)return;
+ const im=document.getElementById("heroImage");
+ try{
+  const r=await fetch("/api/flickr?featured_photo_id="+encodeURIComponent(FEATURED_PHOTO_ID));
+  const data=await r.json();
+  if(!r.ok)throw new Error(data.error||"無法讀取首頁主視覺照片");
+  im.src=data.photo.url;im.style.display="block";im.dataset.loaded="true";
+ }catch(e){console.error("Featured photo:",e);}
+}
 function escapeHtml(s=""){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
 async function loadCategory(category){
  currentCategory=category;document.querySelectorAll(".filter").forEach(b=>b.classList.toggle("active",b.dataset.category===category));
@@ -81,7 +91,7 @@ async function loadCategory(category){
  const albums=data.albums||[];statusEl.textContent=albums.length?labels[category]+" · "+albums.length+" 個相簿":"此分類目前沒有找到公開相簿。請確認 Flickr 相簿名稱及公開權限。";
  albumView.innerHTML=albums.map(a=>'<button class="album" data-id="'+escapeHtml(a.id)+'" data-title="'+escapeHtml(a.title)+'"><div class="album-cover">'+(a.cover?'<img loading="lazy" src="'+escapeHtml(a.cover)+'" alt="">':'')+'</div><div class="album-info"><div class="album-title">'+escapeHtml(a.title)+'</div><div class="album-meta">'+(a.count||0)+' photographs · View album ↗</div></div></button>').join("");
  albumView.querySelectorAll(".album").forEach(el=>el.addEventListener("click",()=>loadPhotos(el.dataset.id,el.dataset.title)));
- const first=albums.find(a=>a.cover);const im=document.getElementById("heroImage");if(FEATURED_PHOTO_URL){im.src=FEATURED_PHOTO_URL;im.style.display="block";}else if(first&&im.dataset.loaded!=="true"){im.src=first.cover;im.dataset.loaded="true";im.style.display="block";}
+ const first=albums.find(a=>a.cover);const im=document.getElementById("heroImage");if(!FEATURED_PHOTO_ID&&first&&im.dataset.loaded!=="true"){im.src=first.cover;im.dataset.loaded="true";im.style.display="block";}
  }catch(e){statusEl.textContent=e.message+"。完成 Vercel 環境變數設定後即可啟用同步。";}}
 async function loadPhotos(id,title){statusEl.hidden=false;statusEl.textContent="正在載入相片…";albumView.hidden=true;photoView.hidden=false;document.getElementById("photoTitle").textContent=title;document.getElementById("photos").innerHTML="";
  try{const r=await fetch("/api/flickr?photoset_id="+encodeURIComponent(id));const data=await r.json();if(!r.ok)throw new Error(data.error||"無法讀取相片");const photos=data.photos||[];statusEl.hidden=true;
@@ -93,6 +103,7 @@ document.getElementById("closeModal").addEventListener("click",()=>document.getE
 document.getElementById("modal").addEventListener("click",e=>{if(e.target.id==="modal")e.currentTarget.classList.remove("open");});
 document.getElementById("backButton").addEventListener("click",()=>{photoView.hidden=true;albumView.hidden=false;statusEl.hidden=false;loadCategory(currentCategory);});
 document.querySelectorAll(".filter").forEach(b=>b.addEventListener("click",()=>loadCategory(b.dataset.category)));
+loadFeaturedPhoto();
 loadCategory("event");
 </script>
 </body>
