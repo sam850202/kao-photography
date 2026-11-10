@@ -206,7 +206,6 @@ requestAnimationFrame(()=>photoView.scrollIntoView({behavior:"smooth",block:"sta
 function openModal(index){if(!currentPhotos.length)return;currentPhotoIndex=(index+currentPhotos.length)%currentPhotos.length;const modalLink=document.getElementById("modalLink");modalLink.style.display=currentModalSource==="selected"?"none":"";updateModal();document.getElementById("modal").classList.add("open");document.body.style.overflow="hidden";}
 function updateModal(){const p=currentPhotos[currentPhotoIndex];if(!p)return;const title=p.title||document.getElementById("photoTitle").textContent;const image=document.getElementById("modalImage");image.src=p.large||p.medium||p.image;image.alt=title;document.getElementById("modalLink").href=p.page||"#";preloadAdjacentPhotos();}
 function preloadAdjacentPhotos(){if(currentPhotos.length<2)return;[-1,1].forEach(step=>{const p=currentPhotos[(currentPhotoIndex+step+currentPhotos.length)%currentPhotos.length];const src=p.large||p.medium||p.image;if(src){const img=new Image();img.src=src;}});}
-const src=p.large||p.medium||p.image;
 function closeModal(){document.getElementById("modal").classList.remove("open");document.body.style.overflow="";}
 function changePhoto(step){if(!currentPhotos.length)return;currentPhotoIndex=(currentPhotoIndex+step+currentPhotos.length)%currentPhotos.length;updateModal();}
 document.getElementById("closeModal").addEventListener("click",closeModal);
