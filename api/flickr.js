@@ -75,11 +75,11 @@ module.exports = async function handler(req, res) {
       if (!selected) return res.status(404).json({ error: "找不到這個公開相簿。" });
       const data = await flickr("flickr.photosets.getPhotos", {
         user_id: USER_ID, photoset_id: selected.id, per_page: "30", page: "1",
-        extras: "url_m,url_z,url_o,description,date_taken,owner_name"
+        extras: "url_m,url_z,url_c,url_l,description,date_taken,owner_name"
       });
       const photos = (data.photoset && data.photoset.photo || []).map(photo => ({
-        id: String(photo.id), title: photo.title || "", medium: photo.url_m || photo.url_z || photo.url_o || null,
-        large: photo.url_o || photo.url_z || photo.url_m || null,
+        id: String(photo.id), title: photo.title || "", medium: photo.url_m || photo.url_z || photo.url_c || photo.url_l || null,
+        large: photo.url_l || photo.url_c || photo.url_z || photo.url_m || null,
         page: "https://www.flickr.com/photos/" + USER_ID + "/" + photo.id,
         taken: photo.datetaken || null
       })).filter(photo => photo.medium);
