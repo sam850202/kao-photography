@@ -28,8 +28,10 @@ async function getAlbums() {
 }
 module.exports = async function handler(req, res) {
   const isFeaturedWorks = req.query.featured_works === "1";
-  res.setHeader("Cache-Control", isFeaturedWorks ? "no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0" : "s-maxage=900, stale-while-revalidate=3600");
-  if (isFeaturedWorks) res.setHeader("CDN-Cache-Control", "no-store");
+  const isRandomAlbum = Boolean(req.query.photoset_id);
+  const disableCache = isFeaturedWorks || isRandomAlbum;
+  res.setHeader("Cache-Control", disableCache ? "no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0" : "s-maxage=900, stale-while-revalidate=3600");
+  if (disableCache) res.setHeader("CDN-Cache-Control", "no-store");
   res.setHeader("Access-Control-Allow-Origin", "*");
   if (req.method !== "GET") return res.status(405).json({ error: "Method not allowed" });
   if (!process.env.FLICKR_API_KEY) return res.status(503).json({ error: "網站尚未設定 Flickr API Key。請在 Vercel 環境變數加入 FLICKR_API_KEY。" });
