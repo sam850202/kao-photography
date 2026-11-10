@@ -56,12 +56,12 @@
     <section id="about">
       <div class="wrap">
         <div class="eyebrow">Behind the camera</div><h2 style="font-size:clamp(32px,4vw,54px);font-weight:450;letter-spacing:-.04em;margin:10px 0 28px">About Kao</h2>
-        <div class="about-grid"><p>我是來自台灣的攝影師，主要拍攝活動紀錄，也持續透過人像、商業、食物與旅行攝影探索不同的影像語言。</p><p>我相信照片不只是記錄結果，也保存了當下的氣氛、關係與細節。歡迎洽談活動紀錄、人物形象及品牌影像合作。</p></div>
+        <div class="about-grid"><p>以活動紀錄與人像攝影為主要拍攝方向，曾參與多項大型活動與展演拍攝，擅長捕捉現場氛圍、人物互動與重要瞬間。</p><p>同時提供食物與商品攝影服務，透過光線、構圖與細節呈現拍攝主題的特色，為品牌與店家留下清晰且具吸引力的影像。</p></div>
         <div class="services"><div class="service"><strong>Event</strong>活動與展演紀錄</div><div class="service"><strong>Portrait</strong>人像與形象照</div><div class="service"><strong>Commercial</strong>品牌與商業影像</div><div class="service"><strong>Food</strong>食物與餐飲攝影</div><div class="service"><strong>Travel</strong>旅行與城市紀實</div></div>
       </div>
     </section>
     <section id="contact">
-      <div class="wrap"><div class="eyebrow">Let's work together</div><h2 style="font-size:clamp(36px,6vw,76px);font-weight:450;letter-spacing:-.05em;margin:12px 0 25px">Have a story<br>to tell?</h2><p class="section-note">歡迎聯絡洽談攝影合作。請將下方聯絡資訊替換成你正式使用的帳號。</p><div class="hero-actions"><a class="button" href="mailto:YOUR_EMAIL@example.com">Email Kao ↗</a><a class="text-link" href="https://www.flickr.com/photos/161644745@N07/albums" target="_blank" rel="noreferrer">Flickr ↗</a><a class="text-link" href="https://www.instagram.com/YOUR_ACCOUNT/" target="_blank" rel="noreferrer">Instagram ↗</a></div></div>
+      <div class="wrap"><div class="eyebrow">Let's work together</div><h2 style="font-size:clamp(36px,6vw,76px);font-weight:450;letter-spacing:-.05em;margin:12px 0 25px">Have a story<br>to tell?</h2><p class="section-note">歡迎聯絡洽談攝影合作。請將下方聯絡資訊替換成你正式使用的帳號。</p><div class="hero-actions"><a class="button" href="mailto:YOUR_EMAIL@example.com">Email Kao ↗</a><a class="text-link" href="https://www.flickr.com/photos/161644745@N07/albums" target="_blank" rel="noreferrer">Flickr ↗</a></div></div>
     </section>
   </main>
   <footer><div class="wrap footer-row"><div class="brand">KAO <span>PHOTOGRAPHY</span></div><div class="footer-small">© <span id="year"></span> KAO PHOTOGRAPHY · TAIWAN</div><div class="footer-links"><a href="https://www.flickr.com/photos/161644745@N07/albums" target="_blank" rel="noreferrer">Flickr</a><a href="#work">Portfolio</a><a href="#contact">Contact</a></div></div></footer>
@@ -69,6 +69,8 @@
 <script>
 const labels={event:"Event 活動紀錄",portrait:"Portrait 人像攝影",commercial:"Commercial 商業攝影",food:"Food 食物攝影",travel:"Travel 旅遊攝影"};
 let currentCategory="event";
+// 可將下方網址替換成任一張公開 Flickr 照片網址，設定首頁主視覺；留空則自動使用 Event 第一個相簿封面。
+const FEATURED_PHOTO_URL="";
 const statusEl=document.getElementById("status"),albumView=document.getElementById("albumView"),photoView=document.getElementById("photoView");
 document.getElementById("year").textContent=new Date().getFullYear();
 function escapeHtml(s=""){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
@@ -79,7 +81,7 @@ async function loadCategory(category){
  const albums=data.albums||[];statusEl.textContent=albums.length?labels[category]+" · "+albums.length+" 個相簿":"此分類目前沒有找到公開相簿。請確認 Flickr 相簿名稱及公開權限。";
  albumView.innerHTML=albums.map(a=>'<button class="album" data-id="'+escapeHtml(a.id)+'" data-title="'+escapeHtml(a.title)+'"><div class="album-cover">'+(a.cover?'<img loading="lazy" src="'+escapeHtml(a.cover)+'" alt="">':'')+'</div><div class="album-info"><div class="album-title">'+escapeHtml(a.title)+'</div><div class="album-meta">'+(a.count||0)+' photographs · View album ↗</div></div></button>').join("");
  albumView.querySelectorAll(".album").forEach(el=>el.addEventListener("click",()=>loadPhotos(el.dataset.id,el.dataset.title)));
- const first=albums.find(a=>a.cover);if(first&&!document.getElementById("heroImage").src){const im=document.getElementById("heroImage");im.src=first.cover;im.style.display="block";}
+ const first=albums.find(a=>a.cover);const im=document.getElementById("heroImage");if(FEATURED_PHOTO_URL){im.src=FEATURED_PHOTO_URL;im.style.display="block";}else if(first&&im.dataset.loaded!=="true"){im.src=first.cover;im.dataset.loaded="true";im.style.display="block";}
  }catch(e){statusEl.textContent=e.message+"。完成 Vercel 環境變數設定後即可啟用同步。";}}
 async function loadPhotos(id,title){statusEl.hidden=false;statusEl.textContent="正在載入相片…";albumView.hidden=true;photoView.hidden=false;document.getElementById("photoTitle").textContent=title;document.getElementById("photos").innerHTML="";
  try{const r=await fetch("/api/flickr?photoset_id="+encodeURIComponent(id));const data=await r.json();if(!r.ok)throw new Error(data.error||"無法讀取相片");const photos=data.photos||[];statusEl.hidden=true;
