@@ -93,7 +93,7 @@ async function loadSelectedWorks(){
   if(!r.ok)throw new Error(data.error||"精選作品暫時無法載入");
   const works=data.works||[];
   status.textContent=works.length?"從不同分類隨機選出的作品":"目前沒有可展示的精選作品。";
-  grid.innerHTML=works.map(p=>'<a class="selected-card" href="'+escapeHtml(p.page)+'" target="_blank" rel="noreferrer"><div class="selected-image"><img loading="lazy" src="'+escapeHtml(p.image)+'" alt="'+escapeHtml(p.title)+'"></div><div class="selected-info"><div class="selected-category">'+escapeHtml(p.category_label)+'</div><div class="selected-title">'+escapeHtml(p.title)+'</div><div class="selected-album">'+escapeHtml(p.album)+'</div></div></a>').join("");
+  grid.innerHTML=works.map(p=>'<a class="selected-card" href="'+escapeHtml(p.page)+'" target="_blank" rel="noreferrer"><div class="selected-image"><img loading="lazy" src="'+escapeHtml(p.image)+'" alt="'+escapeHtml(p.title)+'"></div><div class="selected-info"><div class="selected-category">'+escapeHtml(p.category_label)+'</div><div class="selected-album">'+escapeHtml(p.album)+'</div></div></a>').join("");
  }catch(e){status.textContent=e.message;}
 }
 async function loadFeaturedPhoto(){
