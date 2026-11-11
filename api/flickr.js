@@ -104,7 +104,10 @@ module.exports = async function handler(req, res) {
     const category = String(req.query.category || "event");
     if (!Object.prototype.hasOwnProperty.call(CATEGORIES, category)) return res.status(400).json({ error: "未知的作品分類。" });
     const wanted = CATEGORIES[category].map(normalize);
-    const matched = albums.filter(album => wanted.includes(normalize(album.title)));
+    const order = new Map(wanted.map((title, index) => [title, index]));
+    const matched = albums
+      .filter(album => order.has(normalize(album.title)))
+      .sort((a, b) => order.get(normalize(a.title)) - order.get(normalize(b.title)));
     return res.status(200).json({ category, albums: matched });
   } catch (error) {
     return res.status(502).json({ error: "Flickr 讀取失敗：" + error.message });
