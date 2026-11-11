@@ -93,14 +93,16 @@ module.exports = async function handler(req, res) {
         taken: photo.datetaken || null
       })).filter(photo => photo.medium);
       const windowSize = Math.min(30, allPhotos.length);
-      const maxStart = Math.max(0, allPhotos.length - windowSize);
-      const start = Math.floor(Math.random() * (maxStart + 1));
-      const photos = allPhotos.slice(start, start + windowSize);
-      for (let i = photos.length - 1; i > 0; i--) {
+      const excludedIds = new Set(String(req.query.exclude_ids || "").split(",").filter(Boolean));
+      const freshPhotos = allPhotos.filter(photo => !excludedIds.has(photo.id));
+      const pool = freshPhotos.length >= windowSize ? freshPhotos : allPhotos;
+      const shuffled = [...pool];
+      for (let i = shuffled.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
-        [photos[i], photos[j]] = [photos[j], photos[i]];
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
       }
-      return res.status(200).json({ album: selected, page, totalPages, start, photos });
+      const photos = shuffled.slice(0, windowSize);
+      return res.status(200).json({ album: selected, page, totalPages, photos });
     }
     const category = String(req.query.category || "event");
     if (!Object.prototype.hasOwnProperty.call(CATEGORIES, category)) return res.status(400).json({ error: "未知的作品分類。" });
