@@ -29,7 +29,8 @@ async function getAlbums() {
 module.exports = async function handler(req, res) {
   const isFeaturedWorks = req.query.featured_works === "1";
   const isRandomAlbum = Boolean(req.query.photoset_id);
-  const disableCache = isFeaturedWorks || isRandomAlbum;
+  const isCategoryList = !isFeaturedWorks && !isRandomAlbum && !req.query.featured_photo_id;
+  const disableCache = isFeaturedWorks || isRandomAlbum || isCategoryList;
   res.setHeader("Cache-Control", disableCache ? "no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0" : "s-maxage=900, stale-while-revalidate=3600");
   if (disableCache) res.setHeader("CDN-Cache-Control", "no-store");
   res.setHeader("Access-Control-Allow-Origin", "*");
