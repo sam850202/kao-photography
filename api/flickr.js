@@ -4,7 +4,7 @@ const CATEGORIES = {
   portrait: ["人像/形象照 portrait","Mei-Fei","DUKE","Yuxuan","Fancy","Chieh-Hui","Andy","Hsiu"],
   commercial: ["還路於民募資"],
   food: ["食物攝影 / Food"],
-  travel: ["2018 | 京阪奈 KANSAI","2019 | 九州 KYUSHU","2019 | 東北 TOUHOKU","2023 | 沖繩OKINAWA","2024 | 名古屋NAGOYA","2024 | 飛驒高山 HIDA TAKAYAMA","2024 | 大阪Osaka","2025 | 瀨戶內海藝術祭 Seto Naikai","2025 | 菲律賓 Philippines","2025 | 華沙Ｗarsaw","2025 | 巴黎 Paris","2025 | 布魯塞爾 Brussel","2025 | 帛琉Palau","2026 | 華沙Warsaw","2026 | 克拉科夫 Kraków"]
+  travel: ["2026 | 華沙Warsaw","2026 | 克拉科夫 Kraków","2025 | 瀨戶內海藝術祭 Seto Naikai","2025 | 菲律賓 Philippines","2025 | 華沙Ｗarsaw","2025 | 巴黎 Paris","2025 | 布魯塞爾 Brussel","2025 | 帛琉Palau","2024 | 名古屋NAGOYA","2024 | 飛驒高山 HIDA TAKAYAMA","2024 | 大阪Osaka","2023 | 沖繩OKINAWA","2019 | 九州 KYUSHU","2019 | 東北 TOUHOKU","2018 | 京阪奈 KANSAI"]
 };
 const normalize = value => String(value || "").normalize("NFKC").replace(/[\s|｜]/g,"").toLowerCase();
 async function flickr(method, params) {
