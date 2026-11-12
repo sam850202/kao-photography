@@ -250,6 +250,7 @@ async function refreshAlbumPhotos(){
   await new Promise(resolve=>setTimeout(resolve,240));
   renderAlbumPhotos(data.photos||[],title);
   grid.classList.remove("is-fading");
+  requestAnimationFrame(()=>photoView.scrollIntoView({behavior:"smooth",block:"start"}));
  }catch(error){
   statusEl.hidden=false;statusEl.textContent=error.message||"相片更新失敗，請稍後再試。";
  }finally{
