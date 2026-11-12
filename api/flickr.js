@@ -2,7 +2,7 @@ const USER_ID = "161644745@N07";
 const CATEGORIES = {
   event: ["藝文與賽事紀實 | Arts, Culture & Sporting Events","展演/座談","婚禮與宴會紀實 | Weddings & Banquets","婚禮/宴會","2026 臺灣同志遊行","2022 同志大遊行","2021 世界音樂節","2021 新竹生活節","2020野柳淨港","2019 第二十一屆台北電影節","2018 第二十屆台北電影節","展演","全球華語AV成人大賞"],
   portrait: ["人像/形象照 portrait","火熱巨棒","Mei-Fei","DUKE","Yuxuan","Fancy","Chieh-Hui","Andy","Hsiu"],
-  commercial: ["還路於民募資"],
+  commercial: ["商業形象照 | Commercial","還路於民募資"],
   food: ["食物攝影 / Food"],
   travel: ["2026 | 華沙Warsaw","2026 | 克拉科夫 Kraków","2025 | 瀨戶內海藝術祭 Seto Naikai","2025 | 菲律賓 Philippines","2025 | 華沙Ｗarsaw","2025 | 巴黎 Paris","2025 | 布魯塞爾 Brussel","2025 | 帛琉Palau","2024 | 名古屋NAGOYA","2024 | 飛驒高山 HIDA TAKAYAMA","2024 | 大阪Osaka","2023 | 沖繩OKINAWA","2019 | 九州 KYUSHU","2019 | 東北 TOUHOKU","2018 | 京阪奈 KANSAI"]
 };
