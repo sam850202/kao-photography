@@ -211,14 +211,24 @@ function renderJustifiedSelectedWorks(){
   const height=Math.max(112,Math.min(340,width/group.ratioSum));
   return '<div class="selected-row" style="--row-height:'+height+'px">'+group.items.map(index=>{
    const photo=selectedWorks[index],ratio=ratios[index];
-   return '<button type="button" class="selected-card" data-index="'+index+'" style="--photo-ratio:'+ratio+'"><div class="selected-image"><img loading="eager" decoding="async" src="'+escapeHtml(photo.image)+'" alt="'+escapeHtml((labels[photo.category]||"攝影作品")+"，Kao Photography")+'"></div></button>';
+   return '<button type="button" class="selected-card" data-index="'+index+'" style="--photo-ratio:'+ratio+'"><div class="selected-image"><img loading="eager" fetchpriority="'+(index===0?"high":"auto")+'" decoding="async" src="'+escapeHtml(photo.image)+'" alt="'+escapeHtml((labels[photo.category]||"攝影作品")+"，Kao Photography")+'"></div></button>';
   }).join("")+'</div>';
  }).join("");
  const gallery=document.getElementById("selectedGallery");
  gallery.innerHTML=html;
- gallery.querySelectorAll(".selected-card").forEach(el=>el.addEventListener("click",()=>{
-  currentPhotos=selectedWorks;currentModalSource="selected";document.getElementById("photoTitle").textContent="Selected Works";openModal(Number(el.dataset.index));
- }));
+ gallery.querySelectorAll(".selected-card").forEach(el=>{
+  el.addEventListener("click",()=>{
+   currentPhotos=selectedWorks;currentModalSource="selected";document.getElementById("photoTitle").textContent="Selected Works";openModal(Number(el.dataset.index));
+  });
+  const img=el.querySelector("img");
+  img.addEventListener("load",()=>{
+   if(img.naturalWidth&&img.naturalHeight){
+    const ratio=img.naturalWidth/img.naturalHeight;
+    el.style.setProperty("--photo-ratio",ratio);
+    img.dataset.loadedRatio="true";
+   }
+  },{once:true});
+ });
 }
 function showSelectedBatch(index){
  if(index<0||index>=selectedBatches.length)return;
@@ -226,10 +236,8 @@ function showSelectedBatch(index){
  if(gallery)gallery.classList.add("is-changing");
  selectedBatchIndex=index;
  selectedWorks=selectedBatches[index];
- const show=()=>{renderJustifiedSelectedWorks();const g=document.getElementById("selectedGallery");if(g)g.classList.remove("is-changing");};
- Promise.all(selectedWorks.map(photo=>new Promise(resolve=>{
-  const img=new Image();img.onload=resolve;img.onerror=resolve;img.src=photo.image;
- }))).then(show);
+ renderJustifiedSelectedWorks();
+ requestAnimationFrame(()=>{const g=document.getElementById("selectedGallery");if(g)g.classList.remove("is-changing");});
 }
 async function loadSelectedWorks(){
  if(selectedLoading)return;
@@ -241,12 +249,7 @@ async function loadSelectedWorks(){
   const r=await fetch("/api/flickr?featured_works=1",{cache:"no-store"});
   const data=await r.json();
   if(!r.ok)throw new Error(data.error||"精選作品暫時無法載入");
-  const batch=await Promise.all((data.works||[]).map(photo=>new Promise(resolve=>{
-   const probe=new Image();
-   probe.onload=()=>resolve({...photo,aspect_ratio:probe.naturalWidth/probe.naturalHeight});
-   probe.onerror=()=>resolve({...photo,aspect_ratio:1.5});
-   probe.src=photo.image;
-  })));
+  const batch=(data.works||[]).map(photo=>({...photo,aspect_ratio:1.5}));
   if(!batch.length)throw new Error("目前沒有可展示的精選作品。");
   selectedBatches=selectedBatches.slice(0,selectedBatchIndex+1);
   selectedBatches.push(batch);
