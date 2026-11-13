@@ -195,7 +195,7 @@ function renderJustifiedSelectedWorks(){
  if(!grid||!selectedWorks.length)return;
  const width=grid.clientWidth||window.innerWidth;
  const targetHeight=width<560?145:230;
- const ratios=selectedWorks.map(photo=>Math.max(.55,Math.min(2.4,Number(photo.aspect_ratio)||1.5)));
+ const ratios=selectedWorks.map(photo=>Number(photo.aspect_ratio)||1.5);
  const rows=[];let row=[],sum=0;
  ratios.forEach((ratio,index)=>{
   const nextSum=sum+ratio;
@@ -222,7 +222,12 @@ async function loadSelectedWorks(){
   const r=await fetch("/api/flickr?featured_works=1",{cache:"no-store"});
   const data=await r.json();
   if(!r.ok)throw new Error(data.error||"精選作品暫時無法載入");
-  selectedWorks=(data.works||[]).map(photo=>({...photo,aspect_ratio:photo.aspect_ratio||1.5}));
+  selectedWorks=await Promise.all((data.works||[]).map(photo=>new Promise(resolve=>{
+   const probe=new Image();
+   probe.onload=()=>resolve({...photo,aspect_ratio:probe.naturalWidth/probe.naturalHeight});
+   probe.onerror=()=>resolve({...photo,aspect_ratio:1.5});
+   probe.src=photo.image;
+  })));
   status.textContent=selectedWorks.length?"":"目前沒有可展示的精選作品。";
   renderJustifiedSelectedWorks();
  }catch(e){status.textContent=e.message;}
