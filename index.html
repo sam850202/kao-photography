@@ -56,7 +56,7 @@
      #selected .section-head{align-items:end;margin-bottom:38px}
      #selected .section-note{max-width:300px}
      #selected .section-head h2{font-size:clamp(32px,3.5vw,48px);letter-spacing:-.025em}
-     .selected-grid{position:relative;width:100vw;margin-left:calc(50% - 50vw);padding:0 64px;background:transparent}.selected-stage{position:relative;width:100%;height:clamp(300px,48vw,620px);max-height:72vh;min-height:280px;overflow:hidden;border-radius:10px;background:#191a17}.selected-slide{display:block;width:100%;height:100%;padding:0;border:0;background:transparent;cursor:zoom-in;overflow:hidden}.selected-slide img{display:block;width:100%;height:100%;object-fit:contain;object-position:center;transition:opacity .3s ease}.selected-slide.is-changing img{opacity:.25}.selected-nav{position:absolute;top:50%;z-index:2;display:flex;align-items:center;justify-content:center;width:46px;height:46px;margin-top:-23px;border:1px solid rgba(241,239,233,.32);border-radius:50%;background:rgba(16,17,16,.48);backdrop-filter:blur(8px);color:#f1efe9;cursor:pointer;transition:background .2s,border-color .2s,transform .2s}.selected-nav:hover{background:rgba(16,17,16,.82);border-color:var(--gold);transform:scale(1.06)}.selected-nav:focus-visible{outline:2px solid var(--gold);outline-offset:3px}.selected-nav svg{width:20px;height:20px}.selected-prev{left:76px}.selected-next{right:76px}.selected-counter{position:absolute;right:18px;bottom:16px;z-index:2;padding:6px 10px;border:1px solid rgba(241,239,233,.18);border-radius:999px;background:rgba(16,17,16,.58);color:#f1efe9;font-size:10px;letter-spacing:.12em;font-variant-numeric:tabular-nums}
+     .selected-grid{position:relative;width:100vw;margin-left:calc(50% - 50vw);padding:0 64px;background:transparent}.selected-gallery{position:relative;width:100%;transition:opacity .28s ease}.selected-gallery.is-changing{opacity:.35}.selected-rows{display:flex;flex-direction:column;width:100%;gap:6px}.selected-row{display:flex;width:100%;gap:6px;min-width:0}.selected-card{display:block;flex:var(--photo-ratio,1) 1 0;min-width:0;height:var(--row-height,220px);padding:0;border:0;border-radius:8px;overflow:hidden;background:transparent;cursor:zoom-in;position:relative;transition:filter .22s,transform .22s}.selected-card:focus-visible{outline:2px solid var(--gold);outline-offset:3px}.selected-card:hover{filter:brightness(1.06);transform:translateY(-1px)}.selected-image{width:100%;height:100%;overflow:hidden;border-radius:8px;background:#191a17}.selected-image img{display:block;width:100%;height:100%;object-fit:cover;object-position:center}.selected-nav{position:absolute;top:50%;z-index:3;display:flex;align-items:center;justify-content:center;width:44px;height:44px;margin-top:-22px;border:1px solid rgba(241,239,233,.32);border-radius:50%;background:rgba(16,17,16,.62);backdrop-filter:blur(8px);color:#f1efe9;cursor:pointer;transition:background .2s,border-color .2s,transform .2s}.selected-nav:hover{background:rgba(16,17,16,.88);border-color:var(--gold);transform:scale(1.06)}.selected-nav:focus-visible{outline:2px solid var(--gold);outline-offset:3px}.selected-nav svg{width:20px;height:20px}.selected-prev{left:74px}.selected-next{right:74px}
      .selected-heading{display:flex;align-items:center;gap:12px;flex-wrap:wrap}.selected-live{display:inline-flex;align-items:center;gap:7px;margin-left:5px;padding:6px 9px;border:1px solid rgba(197,173,140,.3);border-radius:999px;color:#d8c7ad;font-size:9px;letter-spacing:.14em;line-height:1;text-transform:uppercase;background:rgba(197,173,140,.06)}.selected-live-dot{width:6px;height:6px;border-radius:50%;background:#c5ad8c;box-shadow:0 0 8px rgba(197,173,140,.8);animation:live-pulse 1.8s ease-in-out infinite}@keyframes live-pulse{0%,100%{opacity:.55;box-shadow:0 0 3px rgba(197,173,140,.35)}50%{opacity:1;box-shadow:0 0 10px rgba(197,173,140,.9)}}
      .selected-refresh{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;padding:0;border:1px solid var(--line);border-radius:50%;background:transparent;color:var(--muted);cursor:pointer;transition:color .2s,border-color .2s}
      .selected-refresh:hover{color:var(--gold);border-color:var(--gold)}
@@ -87,7 +87,7 @@
     footer{padding:48px 0 35px;border-top:1px solid var(--line)}.footer-row{display:flex;justify-content:space-between;gap:24px;align-items:center}.footer-small{font-size:10px;letter-spacing:.12em;color:var(--muted)}.footer-links{display:flex;gap:22px;font-size:11px;color:var(--muted)}
     .modal{position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:20;display:none;align-items:center;justify-content:center;padding:60px 76px}.modal.open{display:flex}.modal img{max-width:min(92vw,1400px);max-height:82vh;object-fit:contain;touch-action:pan-y pinch-zoom;-webkit-user-drag:none}.modal img.slide-next{animation:photoSlideNext .32s cubic-bezier(.22,.7,.25,1) both}.modal img.slide-prev{animation:photoSlidePrev .32s cubic-bezier(.22,.7,.25,1) both}@keyframes photoSlideNext{from{opacity:.35;transform:translateX(28px)}to{opacity:1;transform:translateX(0)}}@keyframes photoSlidePrev{from{opacity:.35;transform:translateX(-28px)}to{opacity:1;transform:translateX(0)}}@media(prefers-reduced-motion:reduce){.modal img.slide-next,.modal img.slide-prev{animation:none}}.modal button{position:absolute;z-index:5;border:1px solid #777;background:rgba(23,23,23,.94);color:white;padding:12px 18px;cursor:pointer;touch-action:manipulation}.modal button:hover{border-color:var(--gold);color:var(--gold)}.modal .modal-close{top:22px;right:26px}.modal .modal-prev,.modal .modal-next{top:50%;transform:translateY(-50%);font-size:30px;line-height:1;padding:18px 21px;min-width:56px;min-height:60px}.modal .modal-prev{left:20px}.modal .modal-next{right:20px}.modal a{position:absolute;bottom:18px;color:#ddd;font-size:12px;text-decoration:underline}
     @media(max-width:1100px){.selected-grid{gap:6px}.selected-row{gap:6px}}@media(max-width:850px){.wrap{width:min(calc(100% - 36px),var(--max))}.hero{grid-template-columns:1fr;gap:30px;padding:58px 0}.hero-art{height:340px}.albums{grid-template-columns:repeat(2,minmax(0,1fr))}.photos{grid-template-columns:repeat(2,minmax(0,1fr))}.service-grid{grid-template-columns:1fr}.service-card{min-height:0;padding:22px}.about-grid{grid-template-columns:minmax(0,1fr);gap:26px}.about-photo{max-width:320px;width:100%;margin:0 auto}.about-copy{gap:15px}nav{gap:14px}}
-    @media(max-width:560px){#selected{padding:72px 0 92px}#selected .section-head{margin-bottom:26px}.selected-grid{padding:0 12px}.selected-stage{height:clamp(260px,68vw,430px);min-height:250px;border-radius:8px}.selected-nav{width:38px;height:38px;margin-top:-19px}.selected-prev{left:20px}.selected-next{right:20px}.selected-counter{right:10px;bottom:10px}.selected-info{display:none}.selected-category{font-size:9px}#work{padding:84px 0 72px;border-top:0}.modal{padding:54px 34px}.modal .modal-prev,.modal .modal-next{background:transparent;border:0;padding:8px 5px;min-width:38px;min-height:44px;font-size:34px;color:#fff}.modal .modal-prev{left:3px}.modal .modal-next{right:3px}.modal .modal-prev:hover,.modal .modal-next:hover{background:transparent;border:0;color:var(--gold)}.selected-grid{gap:5px}.selected-row{gap:5px}.selected-card{border-radius:6px}.selected-image{border-radius:6px}.topbar{height:68px}nav{gap:12px;font-size:9px}.brand{font-size:14px}.hero-art{height:260px}.albums{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;align-items:start}.album{min-width:0;max-width:100%}.album-cover{width:100%;height:auto;aspect-ratio:4/3}.album-info{box-sizing:border-box;min-width:0;max-width:100%;padding:12px;overflow-wrap:anywhere}.album-title{font-size:12px}.photos{gap:5px}.section-head{display:block}.section-note{margin-top:12px}.footer-row{align-items:flex-start;flex-direction:column}.services{grid-template-columns:1fr 1fr}}
+    @media(max-width:560px){#selected{padding:72px 0 92px}#selected .section-head{margin-bottom:26px}.selected-grid{padding:0 12px}.selected-row{gap:5px}.selected-rows{gap:5px}.selected-nav{width:36px;height:36px;margin-top:-18px}.selected-prev{left:16px}.selected-next{right:16px}.selected-info{display:none}.selected-category{font-size:9px}#work{padding:84px 0 72px;border-top:0}.modal{padding:54px 34px}.modal .modal-prev,.modal .modal-next{background:transparent;border:0;padding:8px 5px;min-width:38px;min-height:44px;font-size:34px;color:#fff}.modal .modal-prev{left:3px}.modal .modal-next{right:3px}.modal .modal-prev:hover,.modal .modal-next:hover{background:transparent;border:0;color:var(--gold)}.selected-grid{gap:5px}.selected-row{gap:5px}.selected-card{border-radius:6px}.selected-image{border-radius:6px}.topbar{height:68px}nav{gap:12px;font-size:9px}.brand{font-size:14px}.hero-art{height:260px}.albums{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;align-items:start}.album{min-width:0;max-width:100%}.album-cover{width:100%;height:auto;aspect-ratio:4/3}.album-info{box-sizing:border-box;min-width:0;max-width:100%;padding:12px;overflow-wrap:anywhere}.album-title{font-size:12px}.photos{gap:5px}.section-head{display:block}.section-note{margin-top:12px}.footer-row{align-items:flex-start;flex-direction:column}.services{grid-template-columns:1fr 1fr}}
   </style>
 </head>
 <body>
@@ -110,7 +110,7 @@
       <div class="wrap">
         <div class="section-head"><div><div class="eyebrow">A COLLECTION OF MOMENTS</div><div class="selected-heading"><h2>Photo Highlights</h2><span class="selected-live"><span class="selected-live-dot" aria-hidden="true"></span>Auto-rotating</span><button class="selected-refresh" id="selectedRefresh" type="button" aria-label="重新整理精選作品" title="重新整理精選作品" onclick="loadSelectedWorks()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 7v5h-5"/><path d="M4.93 9A8 8 0 0 1 18.4 5.6L20 12M4 17v-5h5"/><path d="M19.07 15A8 8 0 0 1 5.6 18.4L4 12"/></svg></button></div></div><p class="section-note">從不同攝影類別精選代表照片，直接呈現作品內容，而非相簿列表。</p></div>
         <div id="selectedStatus" class="status">作品載入中…</div>
-        <div id="selectedGrid" class="selected-grid"></div>
+        <div id="selectedGrid" class="selected-grid"><button type="button" class="selected-nav selected-prev" aria-label="上一組精選照片" title="上一組照片" onclick="changeSelectedBatch(-1)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg></button><div id="selectedGallery" class="selected-gallery"></div><button type="button" class="selected-nav selected-next" aria-label="下一組精選照片" title="下一組照片" onclick="changeSelectedBatch(1)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></button></div>
       </div>
     </section>
     <section id="work">
@@ -190,62 +190,78 @@ let albumScrollY=0;
 const FEATURED_PHOTO_ID="50323029916";
 const statusEl=document.getElementById("status"),albumView=document.getElementById("albumView"),photoView=document.getElementById("photoView");
 document.getElementById("year").textContent=new Date().getFullYear();
-let selectedSlideIndex=0;
-function changeSelectedSlide(direction){
- if(!selectedWorks.length)return;
- selectedSlideIndex=(selectedSlideIndex+direction+selectedWorks.length)%selectedWorks.length;
- renderSelectedSlide();
-}
-function renderSelectedSlide(){
- const stage=document.getElementById("selectedStage");
- if(!stage||!selectedWorks.length)return;
- const photo=selectedWorks[selectedSlideIndex];
- const image=stage.querySelector(".selected-slide img");
- const slide=stage.querySelector(".selected-slide");
- slide.classList.add("is-changing");
- const nextSrc=photo.image;
- const show=()=>{
-  image.src=nextSrc;
-  image.alt=(labels[photo.category]||"攝影作品")+"，Kao Photography";
-  slide.dataset.index=String(selectedSlideIndex);
-  stage.querySelector(".selected-counter").textContent=String(selectedSlideIndex+1).padStart(2,"0")+" / "+String(selectedWorks.length).padStart(2,"0");
-  slide.classList.remove("is-changing");
- };
- if(image.src===new URL(nextSrc,location.href).href){show();return;}
- const preloaded=new Image();
- preloaded.onload=show;preloaded.onerror=show;preloaded.src=nextSrc;
-}
+let selectedBatches=[];
+let selectedBatchIndex=-1;
+let selectedLoading=false;
 function renderJustifiedSelectedWorks(){
  const grid=document.getElementById("selectedGrid");
  if(!grid||!selectedWorks.length)return;
- grid.innerHTML='<div class="selected-stage" id="selectedStage"><button type="button" class="selected-slide" aria-label="開啟目前精選照片"><img src="" alt=""></button><button type="button" class="selected-nav selected-prev" aria-label="上一張精選照片" title="上一張"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg></button><button type="button" class="selected-nav selected-next" aria-label="下一張精選照片" title="下一張"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></button><span class="selected-counter"></span></div>';
- const stage=document.getElementById("selectedStage");
- stage.querySelector(".selected-prev").addEventListener("click",()=>changeSelectedSlide(-1));
- stage.querySelector(".selected-next").addEventListener("click",()=>changeSelectedSlide(1));
- stage.querySelector(".selected-slide").addEventListener("click",()=>{currentPhotos=selectedWorks;currentModalSource="selected";document.getElementById("photoTitle").textContent="Selected Works";openModal(selectedSlideIndex);});
- selectedSlideIndex=Math.min(selectedSlideIndex,selectedWorks.length-1);
- renderSelectedSlide();
+ const width=Math.max(280,grid.clientWidth-128);
+ const targetHeight=width<560?145:230;
+ const ratios=selectedWorks.map(photo=>Number(photo.aspect_ratio)||1.5);
+ const rows=[];let row=[],sum=0;
+ ratios.forEach((ratio,index)=>{
+  const nextSum=sum+ratio;
+  const nextHeight=width/nextSum;
+  if(row.length>=2&&nextHeight<targetHeight*.78){rows.push({items:row,ratioSum:sum});row=[];sum=0;}
+  row.push(index);sum+=ratio;
+ });
+ if(row.length)rows.push({items:row,ratioSum:sum});
+ const html=rows.map(group=>{
+  const height=Math.max(112,Math.min(340,width/group.ratioSum));
+  return '<div class="selected-row" style="--row-height:'+height+'px">'+group.items.map(index=>{
+   const photo=selectedWorks[index],ratio=ratios[index];
+   return '<button type="button" class="selected-card" data-index="'+index+'" style="--photo-ratio:'+ratio+'"><div class="selected-image"><img loading="eager" decoding="async" src="'+escapeHtml(photo.image)+'" alt="'+escapeHtml((labels[photo.category]||"攝影作品")+"，Kao Photography")+'"></div></button>';
+  }).join("")+'</div>';
+ }).join("");
+ const gallery=document.getElementById("selectedGallery");
+ gallery.innerHTML=html;
+ gallery.querySelectorAll(".selected-card").forEach(el=>el.addEventListener("click",()=>{
+  currentPhotos=selectedWorks;currentModalSource="selected";document.getElementById("photoTitle").textContent="Selected Works";openModal(Number(el.dataset.index));
+ }));
+}
+function showSelectedBatch(index){
+ if(index<0||index>=selectedBatches.length)return;
+ const gallery=document.getElementById("selectedGallery");
+ if(gallery)gallery.classList.add("is-changing");
+ selectedBatchIndex=index;
+ selectedWorks=selectedBatches[index];
+ const show=()=>{renderJustifiedSelectedWorks();const g=document.getElementById("selectedGallery");if(g)g.classList.remove("is-changing");};
+ Promise.all(selectedWorks.map(photo=>new Promise(resolve=>{
+  const img=new Image();img.onload=resolve;img.onerror=resolve;img.src=photo.image;
+ }))).then(show);
 }
 async function loadSelectedWorks(){
+ if(selectedLoading)return;
+ selectedLoading=true;
  const status=document.getElementById("selectedStatus");
  const refresh=document.getElementById("selectedRefresh");
  if(refresh){refresh.disabled=true;refresh.classList.add("is-loading");}
- status.textContent="作品載入中…";
  try{
   const r=await fetch("/api/flickr?featured_works=1",{cache:"no-store"});
   const data=await r.json();
   if(!r.ok)throw new Error(data.error||"精選作品暫時無法載入");
-  selectedWorks=await Promise.all((data.works||[]).map(photo=>new Promise(resolve=>{
+  const batch=await Promise.all((data.works||[]).map(photo=>new Promise(resolve=>{
    const probe=new Image();
    probe.onload=()=>resolve({...photo,aspect_ratio:probe.naturalWidth/probe.naturalHeight});
    probe.onerror=()=>resolve({...photo,aspect_ratio:1.5});
    probe.src=photo.image;
   })));
-  status.textContent=selectedWorks.length?"":"目前沒有可展示的精選作品。";
-  renderJustifiedSelectedWorks();
+  if(!batch.length)throw new Error("目前沒有可展示的精選作品。");
+  selectedBatches=selectedBatches.slice(0,selectedBatchIndex+1);
+  selectedBatches.push(batch);
+  showSelectedBatch(selectedBatches.length-1);
+  status.textContent="";
  }catch(e){status.textContent=e.message;}
- finally{if(refresh){refresh.disabled=false;refresh.classList.remove("is-loading");}}
+ finally{selectedLoading=false;if(refresh){refresh.disabled=false;refresh.classList.remove("is-loading");}}
 }
+function changeSelectedBatch(direction){
+ if(direction<0){if(selectedBatchIndex>0)showSelectedBatch(selectedBatchIndex-1);return;}
+ if(selectedBatchIndex<selectedBatches.length-1){showSelectedBatch(selectedBatchIndex+1);return;}
+ loadSelectedWorks();
+}
+let selectedLayoutFrame=0;
+window.addEventListener("resize",()=>{cancelAnimationFrame(selectedLayoutFrame);selectedLayoutFrame=requestAnimationFrame(renderJustifiedSelectedWorks);},{passive:true});
 
 async function loadFeaturedPhoto(){
  if(!FEATURED_PHOTO_ID)return;
@@ -384,7 +400,7 @@ loadFeaturedPhoto();
 loadSelectedWorks();
 loadCategory("event");
 // 每 12 秒輪替精選作品；頁面位於背景分頁時暫停，避免不必要的請求。
-setInterval(()=>{if(!document.hidden&&selectedWorks.length>1){changeSelectedSlide(1);}},12000);
+setInterval(()=>{if(!document.hidden&&selectedWorks.length){loadSelectedWorks();}},12000);
 </script>
 </body>
 </html>
