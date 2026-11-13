@@ -57,19 +57,19 @@
      #selected .section-note{max-width:300px}
      #selected .section-head h2{font-size:clamp(32px,3.5vw,48px);letter-spacing:-.025em}
      .selected-grid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));grid-auto-rows:clamp(112px,14vw,190px);gap:18px}
-     .selected-heading{display:flex;align-items:center;gap:12px}
+     .selected-heading{display:flex;align-items:center;gap:12px;flex-wrap:wrap}.selected-live{display:inline-flex;align-items:center;gap:7px;margin-left:5px;padding:6px 9px;border:1px solid rgba(197,173,140,.3);border-radius:999px;color:#d8c7ad;font-size:9px;letter-spacing:.14em;line-height:1;text-transform:uppercase;background:rgba(197,173,140,.06)}.selected-live-dot{width:6px;height:6px;border-radius:50%;background:#c5ad8c;box-shadow:0 0 8px rgba(197,173,140,.8);animation:live-pulse 1.8s ease-in-out infinite}@keyframes live-pulse{0%,100%{opacity:.55;box-shadow:0 0 3px rgba(197,173,140,.35)}50%{opacity:1;box-shadow:0 0 10px rgba(197,173,140,.9)}}
      .selected-refresh{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;padding:0;border:1px solid var(--line);border-radius:50%;background:transparent;color:var(--muted);cursor:pointer;transition:color .2s,border-color .2s}
      .selected-refresh:hover{color:var(--gold);border-color:var(--gold)}
      .selected-refresh:disabled{opacity:.55;cursor:wait}
      .selected-refresh svg{width:15px;height:15px;display:block}
      .selected-refresh.is-loading svg{animation:selected-spin .8s linear infinite}
      @keyframes selected-spin{to{transform:rotate(360deg)}}
-     .selected-card{grid-column:span 3;display:flex;flex-direction:column;min-width:0;min-height:0;padding:0;text-align:left;color:var(--text);font:inherit;cursor:zoom-in;background:#20211d;border:1px solid rgba(197,173,140,.2);border-radius:12px;transition:border-color .25s,transform .25s,box-shadow .25s;overflow:hidden}
+     .selected-card{grid-column:span 3;display:flex;flex-direction:column;min-width:0;min-height:0;padding:0;text-align:left;color:var(--text);font:inherit;cursor:zoom-in;background:#20211d;border:1px solid rgba(197,173,140,.2);border-radius:12px;transition:border-color .25s,transform .25s,box-shadow .25s;overflow:hidden;position:relative}.selected-card:focus-visible{outline:2px solid var(--gold);outline-offset:4px}.selected-image{position:relative}.selected-image:after{content:"⌕  VIEW PHOTO";position:absolute;right:14px;bottom:14px;padding:8px 11px;border:1px solid rgba(241,239,233,.45);border-radius:999px;background:rgba(16,17,16,.78);backdrop-filter:blur(8px);color:#f1efe9;font-size:9px;letter-spacing:.14em;opacity:0;transform:translateY(5px);transition:opacity .22s,transform .22s;pointer-events:none}.selected-card:hover .selected-image:after,.selected-card:focus-visible .selected-image:after{opacity:1;transform:translateY(0)}
      .selected-card:first-child{grid-column:span 6;grid-row:span 2}
      .selected-card{animation:selected-fade-in .65s ease both}
      @keyframes selected-fade-in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
-     @media(prefers-reduced-motion:reduce){.selected-card{animation:none}}
-     .selected-card:hover{border-color:var(--gold);transform:translateY(-3px);box-shadow:0 14px 34px rgba(0,0,0,.2)}
+     @media(prefers-reduced-motion:reduce){.selected-card{animation:none}.selected-live-dot{animation:none}.selected-image:after{transition:none}}
+     .selected-card:hover{border-color:rgba(220,195,158,.9);transform:translateY(-3px);box-shadow:0 0 0 1px rgba(197,173,140,.16),0 0 24px rgba(197,173,140,.12),0 16px 38px rgba(0,0,0,.28)}
      .selected-image{flex:1;min-height:0;width:100%;overflow:hidden;background:#222}
      .selected-image img{display:block;width:100%;height:100%;object-fit:contain;object-position:center;background:#111210;transition:transform .55s}
      .selected-card:first-child .selected-image img{object-position:center}
@@ -108,7 +108,7 @@
     </div>
     <section id="selected" class="selected-section">
       <div class="wrap">
-        <div class="section-head"><div><div class="eyebrow">A COLLECTION OF MOMENTS</div><div class="selected-heading"><h2>Photo Highlights</h2><button class="selected-refresh" id="selectedRefresh" type="button" aria-label="重新整理精選作品" title="重新整理精選作品" onclick="loadSelectedWorks()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 7v5h-5"/><path d="M4.93 9A8 8 0 0 1 18.4 5.6L20 12M4 17v-5h5"/><path d="M19.07 15A8 8 0 0 1 5.6 18.4L4 12"/></svg></button></div></div><p class="section-note">從不同攝影類別精選代表照片，直接呈現作品內容，而非相簿列表。</p></div>
+        <div class="section-head"><div><div class="eyebrow">A COLLECTION OF MOMENTS</div><div class="selected-heading"><h2>Photo Highlights</h2><span class="selected-live"><span class="selected-live-dot" aria-hidden="true"></span>Auto-rotating</span><button class="selected-refresh" id="selectedRefresh" type="button" aria-label="重新整理精選作品" title="重新整理精選作品" onclick="loadSelectedWorks()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 7v5h-5"/><path d="M4.93 9A8 8 0 0 1 18.4 5.6L20 12M4 17v-5h5"/><path d="M19.07 15A8 8 0 0 1 5.6 18.4L4 12"/></svg></button></div></div><p class="section-note">從不同攝影類別精選代表照片，直接呈現作品內容，而非相簿列表。</p></div>
         <div id="selectedStatus" class="status">作品載入中…</div>
         <div id="selectedGrid" class="selected-grid"></div>
       </div>
