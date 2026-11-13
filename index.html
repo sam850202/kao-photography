@@ -51,7 +51,7 @@
     .hero-art{height:440px;position:relative;background:linear-gradient(135deg,#282923,#171916 55%,#3a3329);overflow:hidden}.hero-art:before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 55%,rgba(0,0,0,.55)),radial-gradient(ellipse at 70% 25%,rgba(197,173,140,.23),transparent 48%)}.hero-art img{width:100%;height:100%;object-fit:cover;opacity:.78;display:none}.hero-caption{position:absolute;bottom:22px;left:24px;color:#eee9df;font-size:10px;letter-spacing:.18em;text-transform:uppercase}
     section{padding:74px 0;border-top:1px solid var(--line)}.section-head{display:flex;justify-content:space-between;align-items:end;gap:20px;margin-bottom:34px}.section-head h2{font-size:clamp(28px,3vw,40px);line-height:1.2;font-weight:400;letter-spacing:-.015em;margin:10px 0 0}.section-note{font-size:12px;color:var(--muted);line-height:1.8;max-width:360px}
      /* Selected Works：以編輯式版面呈現，與下方相簿縮圖明確區隔 */
-     #selected{position:relative;padding:104px 0 112px;border-top:0;background:linear-gradient(180deg,#101110 0%,#151612 48%,#101110 100%)}
+     #selected{position:relative;padding:76px 0 88px;border-top:0;background:linear-gradient(180deg,#151612 0%,#101110 100%)}
      #selected:before{content:"";position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--line) 16%,var(--gold) 50%,var(--line) 84%,transparent);opacity:.7}
      #selected .section-head{align-items:end;margin-bottom:38px}
      #selected .section-note{max-width:300px}
@@ -71,10 +71,10 @@
      @media(prefers-reduced-motion:reduce){.selected-card{animation:none}}
      .selected-card:hover{border-color:var(--gold);transform:translateY(-3px);box-shadow:0 14px 34px rgba(0,0,0,.2)}
      .selected-image{flex:1;min-height:0;width:100%;overflow:hidden;background:#222}
-     .selected-image img{display:block;width:100%;height:100%;object-fit:cover;transition:transform .55s}
+     .selected-image img{display:block;width:100%;height:100%;object-fit:contain;object-position:center;background:#111210;transition:transform .55s}
      .selected-card:first-child .selected-image img{object-position:center}
      .selected-info{flex:0 0 auto}
-     .selected-card:hover .selected-image img{transform:scale(1.035)}
+     .selected-card:hover .selected-image img{transform:scale(1.015)}
      .selected-info{padding:12px 14px 14px}
      .selected-category{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--gold)}
      .selected-album{font-size:12px;line-height:1.6;color:var(--text);margin-top:5px}
@@ -96,6 +96,13 @@
     <nav><a href="#work">Works</a><a href="#services">Services</a><a href="#about">About</a><a href="#contact">Contact</a></nav>
   </header>
   <main>
+    <section id="selected" class="selected-section">
+      <div class="wrap">
+        <div class="section-head"><div><div class="eyebrow">CURATED PHOTOGRAPHS · 01—05</div><div class="selected-heading"><h2>Selected Works</h2><button class="selected-refresh" id="selectedRefresh" type="button" aria-label="重新整理精選作品" title="重新整理精選作品" onclick="loadSelectedWorks()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 7v5h-5"/><path d="M4.93 9A8 8 0 0 1 18.4 5.6L20 12M4 17v-5h5"/><path d="M19.07 15A8 8 0 0 1 5.6 18.4L4 12"/></svg></button></div></div><p class="section-note">從不同攝影類別挑選代表影像，呈現近期作品的多元面貌。</p></div>
+        <div id="selectedStatus" class="status">作品載入中…</div>
+        <div id="selectedGrid" class="selected-grid"></div>
+      </div>
+    </section>
     <div class="wrap hero">
       <div>
         <div class="eyebrow">Taiwan · Photographer</div>
@@ -105,13 +112,6 @@
       </div>
       <div class="hero-art"><img id="heroImage" alt="Kao Photography 首頁主視覺攝影作品" fetchpriority="high" decoding="async"><div class="hero-caption">Selected moments · Kao Photography</div></div>
     </div>
-    <section id="selected" class="selected-section">
-      <div class="wrap">
-        <div class="section-head"><div><div class="eyebrow">CURATED PHOTOGRAPHS · 01—05</div><div class="selected-heading"><h2>Selected Works</h2><button class="selected-refresh" id="selectedRefresh" type="button" aria-label="重新整理精選作品" title="重新整理精選作品" onclick="loadSelectedWorks()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 7v5h-5"/><path d="M4.93 9A8 8 0 0 1 18.4 5.6L20 12M4 17v-5h5"/><path d="M19.07 15A8 8 0 0 1 5.6 18.4L4 12"/></svg></button></div></div><p class="section-note">從不同攝影類別挑選代表影像，呈現近期作品的多元面貌。</p></div>
-        <div id="selectedStatus" class="status">作品載入中…</div>
-        <div id="selectedGrid" class="selected-grid"></div>
-      </div>
-    </section>
     <section id="work">
       <div class="wrap">
         <div class="section-head"><div><div class="eyebrow">PORTFOLIO</div><h2>Photography portfolio</h2></div><p class="section-note">點進喜歡的分類，走進相簿細細探索</p></div>
@@ -343,6 +343,8 @@ if(inquiryForm){
 loadFeaturedPhoto();
 loadSelectedWorks();
 loadCategory("event");
+// 每 12 秒輪替精選作品；頁面位於背景分頁時暫停，避免不必要的請求。
+setInterval(()=>{if(!document.hidden){loadSelectedWorks();}},12000);
 </script>
 </body>
 </html>
