@@ -276,6 +276,28 @@ async function loadFeaturedPhoto(){
   im.src=data.photo.url;im.style.display="block";im.dataset.loaded="true";
  }catch(e){console.error("Featured photo:",e);}
 }
+let deferredImageObserver=null;
+function observeDeferredImages(root){
+ const scope=root||document;
+ const images=scope.querySelectorAll("img[data-src]");
+ if(!images.length)return;
+ if(!("IntersectionObserver" in window)){
+  images.forEach(img=>{img.src=img.dataset.src;img.removeAttribute("data-src");});
+  return;
+ }
+ if(!deferredImageObserver){
+  deferredImageObserver=new IntersectionObserver((entries,observer)=>{
+   entries.forEach(entry=>{
+    if(!entry.isIntersecting)return;
+    const img=entry.target;
+    img.src=img.dataset.src;
+    img.removeAttribute("data-src");
+    observer.unobserve(img);
+   });
+  },{rootMargin:"450px 0px",threshold:0.01});
+ }
+ images.forEach(img=>deferredImageObserver.observe(img));
+}
 function escapeHtml(s=""){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
 async function loadCategory(category){
  currentCategory=category;document.querySelectorAll(".filter").forEach(b=>b.classList.toggle("active",b.dataset.category===category));
@@ -284,7 +306,8 @@ async function loadCategory(category){
  try{const r=await fetch("/api/flickr?category="+encodeURIComponent(category));const data=await r.json();if(!r.ok)throw new Error(data.error||"Flickr API 暫時無法讀取");
  const albums=data.albums||[];window.currentAlbums=albums;statusEl.textContent=albums.length?labels[category]+" · "+albums.length+" 個相簿":"此分類目前沒有找到公開相簿。請確認 Flickr 相簿名稱及公開權限。";
  albumView.classList.toggle("portrait",category==="portrait");
- albumView.innerHTML=albums.map(a=>'<button class="album" data-id="'+escapeHtml(a.id)+'" data-title="'+escapeHtml(a.title)+'"><div class="album-cover">'+(a.cover?'<img loading="lazy" decoding="async" src="'+escapeHtml(a.cover)+'" alt="'+escapeHtml(a.title+" 相簿封面｜Kao Photography")+'">':'')+'</div><div class="album-info"><div class="album-title">'+escapeHtml(a.title)+'</div><div class="album-meta">'+(a.count||0)+' photographs · View album ↗</div></div></button>').join("");
+ albumView.innerHTML=albums.map((a,i)=>'<button class="album" data-id="'+escapeHtml(a.id)+'" data-title="'+escapeHtml(a.title)+'"><div class="album-cover">'+(a.cover?'<img '+(i<4?'loading="eager" fetchpriority="auto" src="'+escapeHtml(a.cover)+'"':'loading="lazy" data-src="'+escapeHtml(a.cover)+'"')+' decoding="async" alt="'+escapeHtml(a.title+" 相簿封面｜Kao Photography")+'">':'')+'</div><div class="album-info"><div class="album-title">'+escapeHtml(a.title)+'</div><div class="album-meta">'+(a.count||0)+' photographs · View album ↗</div></div></button>').join("");
+ observeDeferredImages(albumView);
  albumView.querySelectorAll(".album").forEach(el=>el.addEventListener("click",()=>loadPhotos(el.dataset.id,el.dataset.title)));
  const first=albums.find(a=>a.cover);const im=document.getElementById("heroImage");if(!FEATURED_PHOTO_ID&&first&&im.dataset.loaded!=="true"){im.src=first.cover;im.dataset.loaded="true";im.style.display="block";}
  }catch(e){statusEl.textContent=e.message+"。完成 Vercel 環境變數設定後即可啟用同步。";}}
@@ -292,7 +315,8 @@ let currentAlbumId=null;
 function renderAlbumPhotos(photos,title){
  currentPhotos=photos;currentModalSource="album";
  const grid=document.getElementById("photos");
- grid.innerHTML=photos.map((p,i)=>'<button class="photo" style="animation-delay:'+(Math.min(i,24)*35)+'ms" data-index="'+i+'"><img loading="lazy" decoding="async" src="'+escapeHtml(p.medium||p.large)+'" alt="'+escapeHtml(title+" 相簿作品"+(p.title?"｜"+p.title:"")+"｜Kao Photography")+'"></button>').join("");
+ grid.innerHTML=photos.map((p,i)=>'<button class="photo" style="animation-delay:'+(Math.min(i,24)*35)+'ms" data-index="'+i+'"><img '+(i<6?'loading="eager" fetchpriority="auto" src="'+escapeHtml(p.medium||p.large)+'"':'loading="lazy" data-src="'+escapeHtml(p.medium||p.large)+'"')+' decoding="async" alt="'+escapeHtml(title+" 相簿作品"+(p.title?"｜"+p.title:"")+"｜Kao Photography")+'"></button>').join("");
+ observeDeferredImages(grid);
  grid.querySelectorAll(".photo").forEach(el=>el.addEventListener("click",()=>openModal(Number(el.dataset.index))));
 }
 async function loadPhotos(id,title){
