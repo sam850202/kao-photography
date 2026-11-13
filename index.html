@@ -202,14 +202,14 @@ function renderSelectedSlide(){
  const photo=selectedWorks[selectedSlideIndex];
  const image=stage.querySelector(".selected-slide img");
  const slide=stage.querySelector(".selected-slide");
- stage.classList.add("is-changing");
+ slide.classList.add("is-changing");
  const nextSrc=photo.image;
  const show=()=>{
   image.src=nextSrc;
   image.alt=(labels[photo.category]||"攝影作品")+"，Kao Photography";
   slide.dataset.index=String(selectedSlideIndex);
   stage.querySelector(".selected-counter").textContent=String(selectedSlideIndex+1).padStart(2,"0")+" / "+String(selectedWorks.length).padStart(2,"0");
-  stage.classList.remove("is-changing");
+  slide.classList.remove("is-changing");
  };
  if(image.src===new URL(nextSrc,location.href).href){show();return;}
  const preloaded=new Image();
