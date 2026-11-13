@@ -66,7 +66,7 @@ module.exports = async function handler(req, res) {
           id: String(photo.id), title: photo.title || album.title,
           category, category_label: ({ event: "Event 活動紀錄", portrait: "Portrait 人像攝影", commercial: "Commercial 商業形象", food: "Food 食物攝影", travel: "Travel 旅遊攝影" })[category] || category,
           album: album.title,
-          image: photo.url_z || photo.url_m || photo.url_o || null,
+          image: photo.url_m || photo.url_z || photo.url_o || null,
           page: "https://www.flickr.com/photos/" + USER_ID + "/" + photo.id
         });
       }
