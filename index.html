@@ -98,7 +98,7 @@
   <main>
     <section id="selected" class="selected-section">
       <div class="wrap">
-        <div class="section-head"><div><div class="eyebrow">CURATED PHOTOGRAPHS · 01—05</div><div class="selected-heading"><h2>Selected Works</h2><button class="selected-refresh" id="selectedRefresh" type="button" aria-label="重新整理精選作品" title="重新整理精選作品" onclick="loadSelectedWorks()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 7v5h-5"/><path d="M4.93 9A8 8 0 0 1 18.4 5.6L20 12M4 17v-5h5"/><path d="M19.07 15A8 8 0 0 1 5.6 18.4L4 12"/></svg></button></div></div><p class="section-note">從不同攝影類別挑選代表影像，呈現近期作品的多元面貌。</p></div>
+        <div class="section-head"><div><div class="eyebrow">PHOTO HIGHLIGHTS · 01—05</div><div class="selected-heading"><h2>Photo Highlights</h2><button class="selected-refresh" id="selectedRefresh" type="button" aria-label="重新整理精選作品" title="重新整理精選作品" onclick="loadSelectedWorks()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 7v5h-5"/><path d="M4.93 9A8 8 0 0 1 18.4 5.6L20 12M4 17v-5h5"/><path d="M19.07 15A8 8 0 0 1 5.6 18.4L4 12"/></svg></button></div></div><p class="section-note">從不同攝影類別精選代表照片，直接呈現作品內容，而非相簿列表。</p></div>
         <div id="selectedStatus" class="status">作品載入中…</div>
         <div id="selectedGrid" class="selected-grid"></div>
       </div>
@@ -202,7 +202,7 @@ async function loadSelectedWorks(){
   const works=data.works||[];
   status.textContent=works.length?"":"目前沒有可展示的精選作品。";
   selectedWorks=works;
-  grid.innerHTML=works.map((p,i)=>'<button type="button" class="selected-card" style="animation-delay:'+(i*90)+'ms" data-index="'+i+'"><div class="selected-image"><img loading="lazy" src="'+escapeHtml(p.image)+'" alt="'+escapeHtml((labels[p.category]||"攝影作品")+"｜"+p.album+"，Kao Photography")+'"></div><div class="selected-info"><div class="selected-category">'+escapeHtml(p.category_label)+'</div></div></button>').join("");
+  grid.innerHTML=works.map((p,i)=>'<button type="button" class="selected-card" style="animation-delay:'+(i*90)+'ms" data-index="'+i+'"><div class="selected-image"><img loading="lazy" src="'+escapeHtml(p.image)+'" alt="'+escapeHtml((labels[p.category]||"攝影作品")+"，Kao Photography")+'"></div><div class="selected-info"><div class="selected-category">'+escapeHtml(p.category_label)+'</div></div></button>').join("");
   grid.querySelectorAll(".selected-card").forEach(el=>el.addEventListener("click",()=>{currentPhotos=selectedWorks;currentModalSource="selected";document.getElementById("photoTitle").textContent="Selected Works";openModal(Number(el.dataset.index));}));
  }catch(e){status.textContent=e.message;}
  finally{if(refresh){refresh.disabled=false;refresh.classList.remove("is-loading");}}
