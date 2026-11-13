@@ -196,7 +196,9 @@ let selectedLoading=false;
 function renderJustifiedSelectedWorks(){
  const grid=document.getElementById("selectedGrid");
  if(!grid||!selectedWorks.length)return;
- const width=Math.max(280,grid.clientWidth-128);
+ const styles=getComputedStyle(grid);
+ const horizontalPadding=(parseFloat(styles.paddingLeft)||0)+(parseFloat(styles.paddingRight)||0);
+ const width=Math.max(240,grid.clientWidth-horizontalPadding);
  const targetHeight=width<560?145:230;
  const ratios=selectedWorks.map(photo=>Number(photo.aspect_ratio)||1.5);
  const rows=[];let row=[],sum=0;
@@ -224,8 +226,12 @@ function renderJustifiedSelectedWorks(){
   img.addEventListener("load",()=>{
    if(img.naturalWidth&&img.naturalHeight){
     const ratio=img.naturalWidth/img.naturalHeight;
-    el.style.setProperty("--photo-ratio",ratio);
-    img.dataset.loadedRatio="true";
+    const previous=Number(selectedWorks[Number(el.dataset.index)]?.aspect_ratio)||1.5;
+    if(Math.abs(previous-ratio)>.015){
+     selectedWorks[Number(el.dataset.index)].aspect_ratio=ratio;
+     cancelAnimationFrame(selectedLayoutFrame);
+     selectedLayoutFrame=requestAnimationFrame(renderJustifiedSelectedWorks);
+    }
    }
   },{once:true});
  });
@@ -249,7 +255,7 @@ async function loadSelectedWorks(){
   const r=await fetch("/api/flickr?featured_works=1",{cache:"no-store"});
   const data=await r.json();
   if(!r.ok)throw new Error(data.error||"精選作品暫時無法載入");
-  const batch=(data.works||[]).map(photo=>({...photo,aspect_ratio:1.5}));
+  const batch=(data.works||[]).map(photo=>({...photo,aspect_ratio:Number(photo.aspect_ratio)||1.5}));
   if(!batch.length)throw new Error("目前沒有可展示的精選作品。");
   selectedBatches=selectedBatches.slice(0,selectedBatchIndex+1);
   selectedBatches.push(batch);
