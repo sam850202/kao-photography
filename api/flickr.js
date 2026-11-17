@@ -57,32 +57,51 @@ module.exports = async function handler(req, res) {
     if (isFeaturedWorks) {
       const allAlbums = await getAlbums();
       const picks = [];
+      const excludedIds = new Set(String(req.query.exclude_ids || "").split(",").filter(Boolean));
+      const seenIds = new Set(excludedIds);
+      const labels = { event: "Event 活動紀錄", portrait: "Portrait 人像攝影", commercial: "Commercial 商業形象", food: "Food 食物攝影", travel: "Travel 旅遊攝影" };
       for (const [category, titles] of Object.entries(CATEGORIES)) {
         const wanted = titles.map(normalize);
-        const candidates = allAlbums.filter(album => wanted.includes(normalize(album.title)) && album.count > 0);
-        if (!candidates.length) continue;
-        const album = candidates[Math.floor(Math.random() * candidates.length)];
-        const perPage = 3;
-        const totalPages = Math.max(1, Math.ceil(album.count / perPage));
-        const page = Math.floor(Math.random() * totalPages) + 1;
-        const data = await flickr("flickr.photosets.getPhotos", {
-          user_id: USER_ID, photoset_id: album.id, per_page: String(perPage), page: String(page),
-          extras: "url_m,url_z,url_o"
-        });
-        const photos = data.photoset && data.photoset.photo || [];
-        for (const photo of photos) {
-          if (!photo) continue;
-          picks.push({
-            id: String(photo.id), title: photo.title || album.title,
-            category, category_label: ({ event: "Event 活動紀錄", portrait: "Portrait 人像攝影", commercial: "Commercial 商業形象", food: "Food 食物攝影", travel: "Travel 旅遊攝影" })[category] || category,
-            album: album.title,
-            image: photo.url_m || photo.url_z || photo.url_o || null,
-            aspect_ratio: Number(photo.width_m) > 0 && Number(photo.height_m) > 0 ? Number(photo.width_m) / Number(photo.height_m) : 1.5,
-            page: "https://www.flickr.com/photos/" + USER_ID + "/" + photo.id
-          });
+        const candidates = allAlbums
+          .filter(album => wanted.includes(normalize(album.title)) && album.count > 0)
+          .sort(() => Math.random() - 0.5);
+        let categoryCount = 0;
+        const perPage = 9;
+        // Try several distinct random pages/albums so a repeated random draw
+        // does not prevent the next batch from finding unseen photos.
+        for (const album of candidates) {
+          if (categoryCount >= 9) break;
+          const totalPages = Math.max(1, Math.ceil(album.count / perPage));
+          const pagePool = Array.from({ length: totalPages }, (_, index) => index + 1)
+            .sort(() => Math.random() - 0.5)
+            .slice(0, Math.min(4, totalPages));
+          for (const page of pagePool) {
+            if (categoryCount >= 9) break;
+            const data = await flickr("flickr.photosets.getPhotos", {
+              user_id: USER_ID, photoset_id: album.id, per_page: String(perPage), page: String(page),
+              extras: "url_m,url_z,url_o,width_m,height_m"
+            });
+            const photos = data.photoset && data.photoset.photo || [];
+            for (const photo of photos) {
+              if (!photo || seenIds.has(String(photo.id))) continue;
+              const image = photo.url_m || photo.url_z || photo.url_o || null;
+              if (!image) continue;
+              seenIds.add(String(photo.id));
+              picks.push({
+                id: String(photo.id), title: photo.title || album.title,
+                category, category_label: labels[category] || category,
+                album: album.title,
+                image,
+                aspect_ratio: Number(photo.width_m) > 0 && Number(photo.height_m) > 0 ? Number(photo.width_m) / Number(photo.height_m) : 1.5,
+                page: "https://www.flickr.com/photos/" + USER_ID + "/" + photo.id
+              });
+              categoryCount++;
+              if (categoryCount >= 9) break;
+            }
+          }
         }
       }
-      return res.status(200).json({ works: picks.filter(photo => photo.image) });
+      return res.status(200).json({ works: picks });
     }
     const albums = await getAlbums();
     if (req.query.photoset_id) {
