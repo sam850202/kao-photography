@@ -18,7 +18,7 @@ async function flickr(method, params) {
 }
 async function getAlbums() {
   const data = await flickr("flickr.photosets.getList", {
-    user_id: USER_ID, per_page: "500", page: "1", primary_photo_extras: "url_m,url_z,url_o,width_m,height_m"
+    user_id: USER_ID, per_page: "500", page: "1", primary_photo_extras: "url_m,url_z,url_c,url_l,url_o,width_m,height_m"
   });
   return (data.photosets && data.photosets.photoset || []).map(set => ({
     id: String(set.id), title: set.title && (set.title._content || set.title) || "Untitled album",
@@ -92,6 +92,12 @@ module.exports = async function handler(req, res) {
                 category, category_label: labels[category] || category,
                 album: album.title,
                 image,
+                image_srcset: [
+                  photo.url_m && photo.url_m + " 500w",
+                  photo.url_z && photo.url_z + " 640w",
+                  photo.url_c && photo.url_c + " 800w",
+                  photo.url_l && photo.url_l + " 1024w"
+                ].filter(Boolean).join(", "),
                 aspect_ratio: Number(photo.width_m) > 0 && Number(photo.height_m) > 0 ? Number(photo.width_m) / Number(photo.height_m) : 1.5,
                 page: "https://www.flickr.com/photos/" + USER_ID + "/" + photo.id
               });
@@ -120,6 +126,12 @@ module.exports = async function handler(req, res) {
       const allPhotos = (data.photoset && data.photoset.photo || []).map(photo => ({
         id: String(photo.id), title: photo.title || "", medium: photo.url_m || photo.url_z || photo.url_c || photo.url_l || null,
         large: photo.url_l || photo.url_c || photo.url_z || photo.url_m || null,
+        srcset: [
+          photo.url_m && photo.url_m + " 500w",
+          photo.url_z && photo.url_z + " 640w",
+          photo.url_c && photo.url_c + " 800w",
+          photo.url_l && photo.url_l + " 1024w"
+        ].filter(Boolean).join(", "),
         page: "https://www.flickr.com/photos/" + USER_ID + "/" + photo.id,
         taken: photo.datetaken || null
       })).filter(photo => photo.medium);
