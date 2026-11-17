@@ -18,7 +18,7 @@ async function flickr(method, params) {
 }
 async function getAlbums() {
   const data = await flickr("flickr.photosets.getList", {
-    user_id: USER_ID, per_page: "500", page: "1", primary_photo_extras: "url_m,url_z,url_o"
+    user_id: USER_ID, per_page: "500", page: "1", primary_photo_extras: "url_m,url_z,url_o,width_m,height_m"
   });
   return (data.photosets && data.photosets.photoset || []).map(set => ({
     id: String(set.id), title: set.title && (set.title._content || set.title) || "Untitled album",
@@ -70,6 +70,7 @@ module.exports = async function handler(req, res) {
             category, category_label: ({ event: "Event 活動紀錄", portrait: "Portrait 人像攝影", commercial: "Commercial 商業形象", food: "Food 食物攝影", travel: "Travel 旅遊攝影" })[category] || category,
             album: album.title,
             image: photo.url_m || photo.url_z || photo.url_o || null,
+            aspect_ratio: Number(photo.width_m) > 0 && Number(photo.height_m) > 0 ? Number(photo.width_m) / Number(photo.height_m) : 1.5,
             page: "https://www.flickr.com/photos/" + USER_ID + "/" + photo.id
           });
         }
