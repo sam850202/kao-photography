@@ -44,6 +44,17 @@ module.exports = async function handler(req, res) {
   if (req.method !== "GET") return res.status(405).json({ error: "Method not allowed" });
   if (!process.env.FLICKR_API_KEY) return res.status(503).json({ error: "網站尚未設定 Flickr API Key。請在 Vercel 環境變數加入 FLICKR_API_KEY。" });
   try {
+    if (req.query.og_image === "1") {
+      const photoId = "50323029916";
+      const data = await flickr("flickr.photos.getSizes", { photo_id: photoId });
+      const sizes = data.sizes && data.sizes.size || [];
+      const preferred = ["Large 2048", "Large 1600", "Large", "Medium 800", "Medium 640"];
+      const selected = preferred.map(label => sizes.find(size => size.label === label)).find(Boolean) || sizes[sizes.length - 1];
+      if (!selected || !selected.source) return res.status(404).json({ error: "找不到社群分享預覽照片。" });
+      res.setHeader("Cache-Control", "public, max-age=3600, s-maxage=86400, stale-while-revalidate=604800");
+      res.setHeader("Location", selected.source);
+      return res.status(302).end();
+    }
     if (req.query.featured_photo_id) {
       const photoId = String(req.query.featured_photo_id);
       if (!/^\d+$/.test(photoId)) return res.status(400).json({ error: "無效的 Flickr 照片編號。" });
