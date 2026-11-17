@@ -193,6 +193,7 @@ document.getElementById("year").textContent=new Date().getFullYear();
 let selectedBatches=[];
 let selectedBatchIndex=-1;
 let selectedLoading=false;
+let selectedLoadingMore=false;
 function renderJustifiedSelectedWorks(){
  const grid=document.getElementById("selectedGrid");
  if(!grid||!selectedWorks.length)return;
@@ -245,8 +246,16 @@ function showSelectedBatch(index){
  renderJustifiedSelectedWorks();
  requestAnimationFrame(()=>{const g=document.getElementById("selectedGallery");if(g)g.classList.remove("is-changing");});
 }
+function makeSelectedBatches(works){
+ const categories=[...new Set(works.map(photo=>photo.category))];
+ const categoryGroups=categories.map(category=>works.filter(photo=>photo.category===category));
+ const batchCount=categoryGroups.length?Math.min(...categoryGroups.map(group=>group.length)):0;
+ return Array.from({length:batchCount},(_,batchIndex)=>
+  categoryGroups.map(group=>({...group[batchIndex],aspect_ratio:Number(group[batchIndex].aspect_ratio)||1.5}))
+ );
+}
 async function loadSelectedWorks(){
- if(selectedLoading)return;
+ if(selectedLoading||selectedLoadingMore)return;
  selectedLoading=true;
  const status=document.getElementById("selectedStatus");
  const refresh=document.getElementById("selectedRefresh");
@@ -255,13 +264,7 @@ async function loadSelectedWorks(){
   const r=await fetch("/api/flickr?featured_works=1",{cache:"no-store"});
   const data=await r.json();
   if(!r.ok)throw new Error(data.error||"精選作品暫時無法載入");
-  const works=data.works||[];
-  const categories=[...new Set(works.map(photo=>photo.category))];
-  const categoryGroups=categories.map(category=>works.filter(photo=>photo.category===category));
-  const batchCount=categoryGroups.length?Math.min(...categoryGroups.map(group=>group.length)):0;
-  const batches=Array.from({length:batchCount},(_,batchIndex)=>
-   categoryGroups.map(group=>({...group[batchIndex],aspect_ratio:Number(group[batchIndex].aspect_ratio)||1.5}))
-  );
+  const batches=makeSelectedBatches(data.works||[]);
   if(!batches.length||!batches[0].length)throw new Error("目前沒有可展示的精選作品。");
   selectedBatches=batches;
   showSelectedBatch(0);
@@ -269,10 +272,42 @@ async function loadSelectedWorks(){
  }catch(e){status.textContent=e.message;}
  finally{selectedLoading=false;if(refresh){refresh.disabled=false;refresh.classList.remove("is-loading");}}
 }
-function changeSelectedBatch(direction){
- if(!selectedBatches.length||selectedLoading)return;
- const nextIndex=(selectedBatchIndex+direction+selectedBatches.length)%selectedBatches.length;
- showSelectedBatch(nextIndex);
+async function loadMoreSelectedWorks(){
+ if(selectedLoading||selectedLoadingMore)return false;
+ selectedLoadingMore=true;
+ const status=document.getElementById("selectedStatus");
+ try{
+  if(status)status.textContent="正在載入更多精選作品…";
+  const r=await fetch("/api/flickr?featured_works=1",{cache:"no-store"});
+  const data=await r.json();
+  if(!r.ok)throw new Error(data.error||"暫時無法載入更多作品");
+  const knownIds=new Set(selectedBatches.flat().map(photo=>String(photo.id)));
+  const freshWorks=(data.works||[]).filter(photo=>photo.image&&!knownIds.has(String(photo.id)));
+  const newBatches=makeSelectedBatches(freshWorks);
+  if(!newBatches.length||!newBatches[0].length)throw new Error("這次取得的照片與已顯示作品重複，請再按一次箭頭探索。");
+  selectedBatches.push(...newBatches);
+  if(status)status.textContent="";
+  return true;
+ }catch(e){
+  if(status)status.textContent=e.message;
+  return false;
+ }finally{selectedLoadingMore=false;}
+}
+async function changeSelectedBatch(direction){
+ if(!selectedBatches.length||selectedLoading||selectedLoadingMore)return;
+ if(direction<0){
+  const previousIndex=selectedBatchIndex<=0?selectedBatches.length-1:selectedBatchIndex-1;
+  showSelectedBatch(previousIndex);
+  return;
+ }
+ if(selectedBatchIndex+1<selectedBatches.length){
+  showSelectedBatch(selectedBatchIndex+1);
+  return;
+ }
+ const previousLength=selectedBatches.length;
+ if(await loadMoreSelectedWorks()&&selectedBatches.length>previousLength){
+  showSelectedBatch(previousLength);
+ }
 }
 let selectedLayoutFrame=0;
 window.addEventListener("resize",()=>{cancelAnimationFrame(selectedLayoutFrame);selectedLayoutFrame=requestAnimationFrame(renderJustifiedSelectedWorks);},{passive:true});
@@ -437,8 +472,8 @@ if(inquiryForm){
 loadFeaturedPhoto();
 loadSelectedWorks();
 loadCategory("event");
-// 每 12 秒只切換已載入的精選作品組，不重複呼叫 Flickr API。
-setInterval(()=>{if(!document.hidden&&selectedBatches.length&&!selectedLoading){changeSelectedBatch(1);}},12000);
+// 每 12 秒切換已載入的精選作品；到達目前最後一組時才向 Flickr 載入下一批。
+setInterval(()=>{if(!document.hidden&&selectedBatches.length&&!selectedLoading&&!selectedLoadingMore){changeSelectedBatch(1);}},12000);
 </script>
 </body>
 </html>
