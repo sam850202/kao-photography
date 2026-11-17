@@ -63,6 +63,10 @@ module.exports = async function handler(req, res) {
       const preferred = ["Large 2048", "Large 1600", "Large", "Medium 800", "Medium 640"];
       const selected = preferred.map(label => sizes.find(size => size.label === label)).find(Boolean) || sizes[sizes.length - 1];
       if (!selected || !selected.source) return res.status(404).json({ error: "找不到這張 Flickr 照片的可用尺寸。" });
+      if (req.query.redirect === "1") {
+        res.setHeader("Location", selected.source);
+        return res.status(302).end();
+      }
       return res.status(200).json({ photo: { url: selected.source, page: "https://www.flickr.com/photos/" + USER_ID + "/" + photoId } });
     }
     if (isFeaturedWorks) {
