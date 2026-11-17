@@ -223,18 +223,7 @@ function renderJustifiedSelectedWorks(){
   el.addEventListener("click",()=>{
    currentPhotos=selectedWorks;currentModalSource="selected";document.getElementById("photoTitle").textContent="Selected Works";openModal(Number(el.dataset.index));
   });
-  const img=el.querySelector("img");
-  img.addEventListener("load",()=>{
-   if(img.naturalWidth&&img.naturalHeight){
-    const ratio=img.naturalWidth/img.naturalHeight;
-    const previous=Number(selectedWorks[Number(el.dataset.index)]?.aspect_ratio)||1.5;
-    if(Math.abs(previous-ratio)>.015){
-     selectedWorks[Number(el.dataset.index)].aspect_ratio=ratio;
-     cancelAnimationFrame(selectedLayoutFrame);
-     selectedLayoutFrame=requestAnimationFrame(renderJustifiedSelectedWorks);
-    }
-   }
-  },{once:true});
+ }
  });
 }
 function showSelectedBatch(index){
