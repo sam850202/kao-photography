@@ -235,12 +235,14 @@ function showSelectedBatch(index){
  requestAnimationFrame(()=>{const g=document.getElementById("selectedGallery");if(g)g.classList.remove("is-changing");});
 }
 function makeSelectedBatches(works){
- const categories=[...new Set(works.map(photo=>photo.category))];
+ const categories=["event","portrait","commercial","food","travel"];
  const categoryGroups=categories.map(category=>works.filter(photo=>photo.category===category));
- const batchCount=categoryGroups.length?Math.min(...categoryGroups.map(group=>group.length)):0;
+ const batchCount=Math.max(0,...categoryGroups.map(group=>group.length));
  return Array.from({length:batchCount},(_,batchIndex)=>
-  categoryGroups.map(group=>({...group[batchIndex],aspect_ratio:Number(group[batchIndex].aspect_ratio)||1.5}))
- );
+  categoryGroups.map(group=>group[batchIndex])
+   .filter(Boolean)
+   .map(photo=>({...photo,aspect_ratio:Number(photo.aspect_ratio)||1.5}))
+ ).filter(batch=>batch.length);
 }
 async function loadSelectedWorks(){
  if(selectedLoading||selectedLoadingMore)return;
@@ -266,13 +268,17 @@ async function loadMoreSelectedWorks(){
  const status=document.getElementById("selectedStatus");
  try{
   if(status)status.textContent="正在載入更多精選作品…";
-  const r=await fetch("/api/flickr?featured_works=1",{cache:"no-store"});
+  const knownIds=new Set(selectedBatches.flat().map(photo=>String(photo.id)));
+  const excludeIds=[...knownIds].join(",");
+  const r=await fetch("/api/flickr?featured_works=1&exclude_ids="+encodeURIComponent(excludeIds),{cache:"no-store"});
   const data=await r.json();
   if(!r.ok)throw new Error(data.error||"暫時無法載入更多作品");
-  const knownIds=new Set(selectedBatches.flat().map(photo=>String(photo.id)));
   const freshWorks=(data.works||[]).filter(photo=>photo.image&&!knownIds.has(String(photo.id)));
   const newBatches=makeSelectedBatches(freshWorks);
-  if(!newBatches.length||!newBatches[0].length)throw new Error("這次取得的照片與已顯示作品重複，請再按一次箭頭探索。");
+  if(!newBatches.length){
+   if(status)status.textContent="目前已探索完可取得的不同精選作品。";
+   return false;
+  }
   selectedBatches.push(...newBatches);
   if(status)status.textContent="";
   return true;
