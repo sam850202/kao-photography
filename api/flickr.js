@@ -29,10 +29,17 @@ async function getAlbums() {
 module.exports = async function handler(req, res) {
   const isFeaturedWorks = req.query.featured_works === "1";
   const isRandomAlbum = Boolean(req.query.photoset_id);
-  const isCategoryList = !isFeaturedWorks && !isRandomAlbum && !req.query.featured_photo_id;
-  const disableCache = isFeaturedWorks || isRandomAlbum || isCategoryList;
-  res.setHeader("Cache-Control", disableCache ? "no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0" : "s-maxage=900, stale-while-revalidate=3600");
-  if (disableCache) res.setHeader("CDN-Cache-Control", "no-store");
+  const isFeaturedPhoto = Boolean(req.query.featured_photo_id);
+  const isCategoryList = !isFeaturedWorks && !isRandomAlbum && !isFeaturedPhoto;
+  // Cache stable API responses at the CDN; keep randomized album windows uncached.
+  const cachePolicy = isFeaturedWorks
+    ? "public, max-age=0, s-maxage=300, stale-while-revalidate=1800"
+    : isCategoryList
+      ? "public, max-age=0, s-maxage=600, stale-while-revalidate=3600"
+      : isFeaturedPhoto
+        ? "public, max-age=3600, s-maxage=86400, stale-while-revalidate=604800"
+        : "no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0";
+  res.setHeader("Cache-Control", cachePolicy);
   res.setHeader("Access-Control-Allow-Origin", "*");
   if (req.method !== "GET") return res.status(405).json({ error: "Method not allowed" });
   if (!process.env.FLICKR_API_KEY) return res.status(503).json({ error: "網站尚未設定 Flickr API Key。請在 Vercel 環境變數加入 FLICKR_API_KEY。" });
