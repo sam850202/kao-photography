@@ -214,7 +214,7 @@ function renderJustifiedSelectedWorks(){
   const height=Math.max(112,Math.min(340,width/group.ratioSum));
   return '<div class="selected-row" style="--row-height:'+height+'px">'+group.items.map(index=>{
    const photo=selectedWorks[index],ratio=ratios[index];
-   return '<button type="button" class="selected-card" data-index="'+index+'" style="--photo-ratio:'+ratio+'"><div class="selected-image"><img loading="eager" fetchpriority="'+(index===0?"high":"auto")+'" decoding="async" src="'+escapeHtml(photo.image)+'" alt="'+escapeHtml((labels[photo.category]||"攝影作品")+"，Kao Photography")+'"></div></button>';
+   return '<button type="button" class="selected-card" data-index="'+index+'" style="--photo-ratio:'+ratio+'"><div class="selected-image"><img loading="eager" fetchpriority="'+(index===0?"high":"auto")+'" decoding="async" src="'+escapeHtml(photo.image)+'"'+(photo.image_srcset?' srcset="'+escapeHtml(photo.image_srcset)+'" sizes="(max-width: 640px) 100vw, (max-width: 1100px) 50vw, 33vw"':'')+' alt="'+escapeHtml((labels[photo.category]||"攝影作品")+"，Kao Photography")+'"></div></button>';
   }).join("")+'</div>';
  }).join("");
  const gallery=document.getElementById("selectedGallery");
@@ -358,7 +358,7 @@ let currentAlbumId=null;
 function renderAlbumPhotos(photos,title){
  currentPhotos=photos;currentModalSource="album";
  const grid=document.getElementById("photos");
- grid.innerHTML=photos.map((p,i)=>'<button class="photo" style="animation-delay:'+(Math.min(i,24)*35)+'ms" data-index="'+i+'"><img '+(i<6?'loading="eager" fetchpriority="auto" src="'+escapeHtml(p.medium||p.large)+'"':'loading="lazy" data-src="'+escapeHtml(p.medium||p.large)+'"')+' decoding="async" alt="'+escapeHtml(title+" 相簿作品"+(p.title?"｜"+p.title:"")+"｜Kao Photography")+'"></button>').join("");
+ grid.innerHTML=photos.map((p,i)=>'<button class="photo" style="animation-delay:'+(Math.min(i,24)*35)+'ms" data-index="'+i+'"><img '+(i<6?'loading="eager" fetchpriority="auto" src="'+escapeHtml(p.medium||p.large)+'"':'loading="lazy" data-src="'+escapeHtml(p.medium||p.large)+'"')+(p.srcset?' srcset="'+escapeHtml(p.srcset)+'" sizes="(max-width: 640px) 100vw, (max-width: 1100px) 50vw, 33vw"':'')+' decoding="async" alt="'+escapeHtml(title+" 相簿作品"+(p.title?"｜"+p.title:"")+"｜Kao Photography")+'"></button>').join("");
  observeDeferredImages(grid);
  grid.querySelectorAll(".photo").forEach(el=>el.addEventListener("click",()=>openModal(Number(el.dataset.index))));
 }
