@@ -256,8 +256,10 @@ async function loadSelectedWorks(){
   if(!r.ok)throw new Error(data.error||"精選作品暫時無法載入");
   const batches=makeSelectedBatches(data.works||[]);
   if(!batches.length||!batches[0].length)throw new Error("目前沒有可展示的精選作品。");
+  const previousIndex=selectedBatchIndex;
   selectedBatches=batches;
-  showSelectedBatch(0);
+  const preservedIndex=previousIndex<0?0:Math.min(previousIndex,selectedBatches.length-1);
+  showSelectedBatch(preservedIndex);
   status.textContent="";
  }catch(e){status.textContent=e.message;}
  finally{selectedLoading=false;if(refresh){refresh.disabled=false;refresh.classList.remove("is-loading");}}
