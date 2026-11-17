@@ -33,7 +33,7 @@ module.exports = async function handler(req, res) {
   const isCategoryList = !isFeaturedWorks && !isRandomAlbum && !isFeaturedPhoto;
   // Cache stable API responses at the CDN; keep randomized album windows uncached.
   const cachePolicy = isFeaturedWorks
-    ? "public, max-age=0, s-maxage=300, stale-while-revalidate=1800"
+    ? "no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0"
     : isCategoryList
       ? "public, max-age=0, s-maxage=600, stale-while-revalidate=3600"
       : isFeaturedPhoto
