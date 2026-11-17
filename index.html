@@ -255,19 +255,24 @@ async function loadSelectedWorks(){
   const r=await fetch("/api/flickr?featured_works=1",{cache:"no-store"});
   const data=await r.json();
   if(!r.ok)throw new Error(data.error||"精選作品暫時無法載入");
-  const batch=(data.works||[]).map(photo=>({...photo,aspect_ratio:Number(photo.aspect_ratio)||1.5}));
-  if(!batch.length)throw new Error("目前沒有可展示的精選作品。");
-  selectedBatches=selectedBatches.slice(0,selectedBatchIndex+1);
-  selectedBatches.push(batch);
-  showSelectedBatch(selectedBatches.length-1);
+  const works=data.works||[];
+  const categories=[...new Set(works.map(photo=>photo.category))];
+  const categoryGroups=categories.map(category=>works.filter(photo=>photo.category===category));
+  const batchCount=categoryGroups.length?Math.min(...categoryGroups.map(group=>group.length)):0;
+  const batches=Array.from({length:batchCount},(_,batchIndex)=>
+   categoryGroups.map(group=>({...group[batchIndex],aspect_ratio:Number(group[batchIndex].aspect_ratio)||1.5}))
+  );
+  if(!batches.length||!batches[0].length)throw new Error("目前沒有可展示的精選作品。");
+  selectedBatches=batches;
+  showSelectedBatch(0);
   status.textContent="";
  }catch(e){status.textContent=e.message;}
  finally{selectedLoading=false;if(refresh){refresh.disabled=false;refresh.classList.remove("is-loading");}}
 }
 function changeSelectedBatch(direction){
- if(direction<0){if(selectedBatchIndex>0)showSelectedBatch(selectedBatchIndex-1);return;}
- if(selectedBatchIndex<selectedBatches.length-1){showSelectedBatch(selectedBatchIndex+1);return;}
- loadSelectedWorks();
+ if(!selectedBatches.length||selectedLoading)return;
+ const nextIndex=(selectedBatchIndex+direction+selectedBatches.length)%selectedBatches.length;
+ showSelectedBatch(nextIndex);
 }
 let selectedLayoutFrame=0;
 window.addEventListener("resize",()=>{cancelAnimationFrame(selectedLayoutFrame);selectedLayoutFrame=requestAnimationFrame(renderJustifiedSelectedWorks);},{passive:true});
@@ -432,8 +437,8 @@ if(inquiryForm){
 loadFeaturedPhoto();
 loadSelectedWorks();
 loadCategory("event");
-// 每 12 秒輪替精選作品；頁面位於背景分頁時暫停，避免不必要的請求。
-setInterval(()=>{if(!document.hidden&&selectedWorks.length){loadSelectedWorks();}},12000);
+// 每 12 秒只切換已載入的精選作品組，不重複呼叫 Flickr API。
+setInterval(()=>{if(!document.hidden&&selectedBatches.length&&!selectedLoading){changeSelectedBatch(1);}},12000);
 </script>
 </body>
 </html>
